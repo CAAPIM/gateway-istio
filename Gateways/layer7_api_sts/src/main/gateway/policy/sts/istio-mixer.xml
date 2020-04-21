@@ -1,0 +1,648 @@
+<wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy" xmlns:L7p="http://www.layer7tech.com/ws/policy">
+    <wsp:All wsp:Usage="Required">
+        <wsp:OneOrMore wsp:Usage="Required">
+            <L7p:ComparisonAssertion>
+                <L7p:CaseSensitive booleanValue="false"/>
+                <L7p:Expression1 stringValue="${request.tcp.localport}"/>
+                <L7p:Expression2 stringValue="18888"/>
+                <L7p:Predicates predicates="included">
+                    <L7p:item binary="included">
+                        <L7p:CaseSensitive booleanValue="false"/>
+                        <L7p:RightValue stringValue="18888"/>
+                    </L7p:item>
+                </L7p:Predicates>
+            </L7p:ComparisonAssertion>
+            <wsp:All wsp:Usage="Required">
+                <L7p:CustomizeErrorResponse>
+                    <L7p:Content stringValueReference="inline"><![CDATA[{
+  "result": "invalid",
+  "message": {
+    "error": "invalid_port",
+    "error_description": "Validation error"
+  }
+}]]></L7p:Content>
+                    <L7p:ContentType stringValue="application/json; charset=UTF-8"/>
+                    <L7p:ExtraHeaders nameValuePairArray="included"/>
+                    <L7p:HttpStatus stringValue="400"/>
+                </L7p:CustomizeErrorResponse>
+                <L7p:RaiseError/>
+            </wsp:All>
+        </wsp:OneOrMore>
+        <L7p:CommentAssertion>
+            <L7p:Comment stringValue="START OF AUTHORIZATION BLOCK"/>
+        </L7p:CommentAssertion>
+        <L7p:Encapsulated encassName="OTK HTTP Method Validation">
+            <L7p:Parameters mapValue="included">
+                <L7p:entry>
+                    <L7p:key stringValue="method"/>
+                    <L7p:value stringValue="POST|GET"/>
+                </L7p:entry>
+            </L7p:Parameters>
+        </L7p:Encapsulated>
+        <L7p:SetVariable>
+            <L7p:Expression><![CDATA[${request.http.header.authorization}]]></L7p:Expression>
+            <L7p:VariableToSet stringValue="auth_header"/>
+        </L7p:SetVariable>
+        <L7p:SetVariable>
+            <L7p:Expression><![CDATA[${request.http.parameter.access_token}]]></L7p:Expression>
+            <L7p:VariableToSet stringValue="access_token"/>
+        </L7p:SetVariable>
+        <L7p:SetVariable>
+            <L7p:Expression><![CDATA[false]]></L7p:Expression>
+            <L7p:VariableToSet stringValue="onetime"/>
+        </L7p:SetVariable>
+        <L7p:SetVariable>
+            <L7p:Expression><![CDATA[${request.http.parameter.scope_required}]]></L7p:Expression>
+            <L7p:VariableToSet stringValue="scope_required"/>
+        </L7p:SetVariable>
+        <L7p:SetVariable>
+            <L7p:Expression><![CDATA[${request.http.parameter.scope_fail}]]></L7p:Expression>
+            <L7p:VariableToSet stringValue="scope_fail"/>
+        </L7p:SetVariable>
+        <wsp:OneOrMore wsp:Usage="Required">
+            <L7p:HtmlFormDataAssertion>
+                <L7p:AllowGet booleanValue="true"/>
+                <L7p:AllowPost booleanValue="true"/>
+                <L7p:FieldSpecs htmlFormFieldSpecArray="included">
+                    <L7p:item htmlFormFieldSpec="included">
+                        <L7p:AllowEmpty boxedBooleanValue="true"/>
+                        <L7p:DataType fieldDataType="any"/>
+                        <L7p:MaxOccurs intValue="1"/>
+                        <L7p:Name stringValue="access_token"/>
+                    </L7p:item>
+                    <L7p:item htmlFormFieldSpec="included">
+                        <L7p:AllowEmpty boxedBooleanValue="true"/>
+                        <L7p:DataType fieldDataType="any"/>
+                        <L7p:MaxOccurs intValue="1"/>
+                        <L7p:Name stringValue="http_method"/>
+                    </L7p:item>
+                    <L7p:item htmlFormFieldSpec="included">
+                        <L7p:AllowEmpty boxedBooleanValue="true"/>
+                        <L7p:DataType fieldDataType="any"/>
+                        <L7p:MaxOccurs intValue="1"/>
+                        <L7p:Name stringValue="isonetime"/>
+                    </L7p:item>
+                    <L7p:item htmlFormFieldSpec="included">
+                        <L7p:AllowEmpty boxedBooleanValue="true"/>
+                        <L7p:DataType fieldDataType="any"/>
+                        <L7p:MaxOccurs intValue="1"/>
+                        <L7p:Name stringValue="scope_fail"/>
+                    </L7p:item>
+                    <L7p:item htmlFormFieldSpec="included">
+                        <L7p:AllowEmpty boxedBooleanValue="true"/>
+                        <L7p:DataType fieldDataType="any"/>
+                        <L7p:MaxOccurs intValue="1"/>
+                        <L7p:Name stringValue="scope_required"/>
+                    </L7p:item>
+                    <L7p:item htmlFormFieldSpec="included">
+                        <L7p:AllowEmpty boxedBooleanValue="true"/>
+                        <L7p:DataType fieldDataType="any"/>
+                        <L7p:MaxOccurs intValue="1"/>
+                        <L7p:Name stringValue="url"/>
+                    </L7p:item>
+                </L7p:FieldSpecs>
+            </L7p:HtmlFormDataAssertion>
+            <wsp:All wsp:Usage="Required">
+                <L7p:AuditDetailAssertion>
+                    <L7p:Detail stringValue="no parameters or duplicate parameters or a missing access_token: Given='${access_token}'"/>
+                </L7p:AuditDetailAssertion>
+                <L7p:CustomizeErrorResponse>
+                    <L7p:Content stringValueReference="inline"><![CDATA[{ 
+  "result": "invalid",
+   "message": ${error.msg}
+}]]></L7p:Content>
+                    <L7p:ContentType stringValue="application/json; charset=UTF-8"/>
+                    <L7p:ExtraHeaders nameValuePairArray="included"/>
+                    <L7p:HttpStatus stringValue="400"/>
+                </L7p:CustomizeErrorResponse>
+                <L7p:Encapsulated encassName="OTK Fail with error message">
+                    <L7p:AssertionComment assertionComment="included">
+                        <L7p:Properties mapValue="included">
+                            <L7p:entry>
+                                <L7p:key stringValue="LEFT.COMMENT"/>
+                                <L7p:value stringValue="103"/>
+                            </L7p:entry>
+                        </L7p:Properties>
+                    </L7p:AssertionComment>
+                    <L7p:Parameters mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="apiPrefix"/>
+                            <L7p:value stringValue=""/>
+                        </L7p:entry>
+                        <L7p:entry>
+                            <L7p:key stringValue="givenErrorCode"/>
+                            <L7p:value stringValue="103"/>
+                        </L7p:entry>
+                    </L7p:Parameters>
+                </L7p:Encapsulated>
+                <L7p:assertionComment>
+                    <L7p:Properties mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="LEFT.COMMENT"/>
+                            <L7p:value stringValue="error"/>
+                        </L7p:entry>
+                    </L7p:Properties>
+                </L7p:assertionComment>
+            </wsp:All>
+            <L7p:assertionComment>
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="LEFT.COMMENT"/>
+                        <L7p:value stringValue="Parameters"/>
+                    </L7p:entry>
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="check for parameters"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:assertionComment>
+        </wsp:OneOrMore>
+        <wsp:OneOrMore wsp:Usage="Required">
+            <L7p:Encapsulated encassName="OTK Access Token Retrieval">
+                <L7p:Parameters mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="allow_header"/>
+                        <L7p:value stringValue="true"/>
+                    </L7p:entry>
+                    <L7p:entry>
+                        <L7p:key stringValue="allow_query"/>
+                        <L7p:value stringValue="true"/>
+                    </L7p:entry>
+                    <L7p:entry>
+                        <L7p:key stringValue="auth_header"/>
+                        <L7p:value stringValue="${auth_header}"/>
+                    </L7p:entry>
+                    <L7p:entry>
+                        <L7p:key stringValue="auth_param_token"/>
+                        <L7p:value stringValue="${access_token}"/>
+                    </L7p:entry>
+                    <L7p:entry>
+                        <L7p:key stringValue="custom"/>
+                        <L7p:value stringValue=""/>
+                    </L7p:entry>
+                    <L7p:entry>
+                        <L7p:key stringValue="given_access_token"/>
+                        <L7p:value stringValue=""/>
+                    </L7p:entry>
+                </L7p:Parameters>
+            </L7p:Encapsulated>
+            <wsp:All wsp:Usage="Required">
+                <L7p:CustomizeErrorResponse>
+                    <L7p:Content stringValueReference="inline"><![CDATA[{ 
+  "result": "invalid",
+   "message": ${error.msg}
+}]]></L7p:Content>
+                    <L7p:ContentType stringValue="application/json; charset=UTF-8"/>
+                    <L7p:ExtraHeaders nameValuePairArray="included"/>
+                    <L7p:HttpStatus stringValue="400"/>
+                </L7p:CustomizeErrorResponse>
+                <L7p:Encapsulated encassName="OTK Fail with error message">
+                    <L7p:AssertionComment assertionComment="included">
+                        <L7p:Properties mapValue="included">
+                            <L7p:entry>
+                                <L7p:key stringValue="LEFT.COMMENT"/>
+                                <L7p:value stringValue="error code"/>
+                            </L7p:entry>
+                            <L7p:entry>
+                                <L7p:key stringValue="RIGHT.COMMENT"/>
+                                <L7p:value stringValue="error code token from retrieval assertion"/>
+                            </L7p:entry>
+                        </L7p:Properties>
+                    </L7p:AssertionComment>
+                    <L7p:Parameters mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="apiPrefix"/>
+                            <L7p:value stringValue=""/>
+                        </L7p:entry>
+                        <L7p:entry>
+                            <L7p:key stringValue="givenErrorCode"/>
+                            <L7p:value stringValue="${error.code}"/>
+                        </L7p:entry>
+                    </L7p:Parameters>
+                </L7p:Encapsulated>
+            </wsp:All>
+            <L7p:assertionComment>
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="LEFT.COMMENT"/>
+                        <L7p:value stringValue="Find"/>
+                    </L7p:entry>
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="Find the token in the request"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:assertionComment>
+        </wsp:OneOrMore>
+        <L7p:Encapsulated encassName="OTK Variable Configuration"/>
+        <wsp:OneOrMore wsp:Usage="Required">
+            <wsp:All wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:CaseSensitive booleanValue="false"/>
+                    <L7p:Expression1 stringValue="${oauth2_token_type}"/>
+                    <L7p:Expression2 stringValue="BEARER"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:RightValue stringValue="BEARER"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:ComparisonAssertion>
+                    <L7p:CaseSensitive booleanValue="false"/>
+                    <L7p:Expression1 stringValue="${access_token}"/>
+                    <L7p:Operator operatorNull="null"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item dataType="included">
+                            <L7p:Type variableDataType="string"/>
+                        </L7p:item>
+                        <L7p:item binary="included">
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:Negated booleanValue="true"/>
+                            <L7p:Operator operator="EMPTY"/>
+                            <L7p:RightValue stringValue=""/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <wsp:OneOrMore wsp:Usage="Required">
+                    <wsp:All wsp:Usage="Required">
+                        <L7p:ComparisonAssertion>
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:Expression1 stringValue="${access_token_type}"/>
+                            <L7p:Operator operatorNull="null"/>
+                            <L7p:Predicates predicates="included">
+                                <L7p:item dataType="included">
+                                    <L7p:Type variableDataType="string"/>
+                                </L7p:item>
+                                <L7p:item binary="included">
+                                    <L7p:CaseSensitive booleanValue="false"/>
+                                    <L7p:RightValue stringValue="uuid"/>
+                                </L7p:item>
+                            </L7p:Predicates>
+                        </L7p:ComparisonAssertion>
+                        <L7p:Encapsulated encassName="OTK Token Get (token)">
+                            <L7p:Parameters mapValue="included">
+                                <L7p:entry>
+                                    <L7p:key stringValue="client_key"/>
+                                    <L7p:value stringValue=""/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="queryOffset"/>
+                                    <L7p:value stringValue="0"/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="resource_owner"/>
+                                    <L7p:value stringValue=""/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="return_json"/>
+                                    <L7p:value stringValue="false"/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="rtoken"/>
+                                    <L7p:value stringValue=""/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="token"/>
+                                    <L7p:value stringValue="${access_token}"/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="token_status"/>
+                                    <L7p:value stringValue=""/>
+                                </L7p:entry>
+                            </L7p:Parameters>
+                        </L7p:Encapsulated>
+                        <L7p:assertionComment>
+                            <L7p:Properties mapValue="included">
+                                <L7p:entry>
+                                    <L7p:key stringValue="LEFT.COMMENT"/>
+                                    <L7p:value stringValue="UUID"/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="RIGHT.COMMENT"/>
+                                    <L7p:value stringValue="Validate if access_token is UUID"/>
+                                </L7p:entry>
+                            </L7p:Properties>
+                        </L7p:assertionComment>
+                    </wsp:All>
+                    <wsp:All wsp:Usage="Required">
+                        <L7p:ComparisonAssertion>
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:Expression1 stringValue="${access_token_type}"/>
+                            <L7p:Operator operatorNull="null"/>
+                            <L7p:Predicates predicates="included">
+                                <L7p:item dataType="included">
+                                    <L7p:Type variableDataType="string"/>
+                                </L7p:item>
+                                <L7p:item binary="included">
+                                    <L7p:CaseSensitive booleanValue="false"/>
+                                    <L7p:RightValue stringValue="jwt"/>
+                                </L7p:item>
+                            </L7p:Predicates>
+                        </L7p:ComparisonAssertion>
+                        <L7p:Encapsulated encassName="OTK Validate JWT OAuth Token">
+                            <L7p:Parameters mapValue="included">
+                                <L7p:entry>
+                                    <L7p:key stringValue="access_token"/>
+                                    <L7p:value stringValue="${access_token}"/>
+                                </L7p:entry>
+                            </L7p:Parameters>
+                        </L7p:Encapsulated>
+                        <wsp:OneOrMore wsp:Usage="Required">
+                            <L7p:ComparisonAssertion>
+                                <L7p:CaseSensitive booleanValue="false"/>
+                                <L7p:Expression1 stringValue="${query_db}"/>
+                                <L7p:Expression2 stringValue="false"/>
+                                <L7p:Predicates predicates="included">
+                                    <L7p:item binary="included">
+                                        <L7p:CaseSensitive booleanValue="false"/>
+                                        <L7p:RightValue stringValue="false"/>
+                                    </L7p:item>
+                                </L7p:Predicates>
+                            </L7p:ComparisonAssertion>
+                            <L7p:Encapsulated encassName="OTK Token Get (token)">
+                                <L7p:Parameters mapValue="included">
+                                    <L7p:entry>
+                                        <L7p:key stringValue="client_key"/>
+                                        <L7p:value stringValue=""/>
+                                    </L7p:entry>
+                                    <L7p:entry>
+                                        <L7p:key stringValue="queryOffset"/>
+                                        <L7p:value stringValue="0"/>
+                                    </L7p:entry>
+                                    <L7p:entry>
+                                        <L7p:key stringValue="resource_owner"/>
+                                        <L7p:value stringValue=""/>
+                                    </L7p:entry>
+                                    <L7p:entry>
+                                        <L7p:key stringValue="return_json"/>
+                                        <L7p:value stringValue="false"/>
+                                    </L7p:entry>
+                                    <L7p:entry>
+                                        <L7p:key stringValue="rtoken"/>
+                                        <L7p:value stringValue=""/>
+                                    </L7p:entry>
+                                    <L7p:entry>
+                                        <L7p:key stringValue="token"/>
+                                        <L7p:value stringValue="${jwt_id}"/>
+                                    </L7p:entry>
+                                    <L7p:entry>
+                                        <L7p:key stringValue="token_status"/>
+                                        <L7p:value stringValue=""/>
+                                    </L7p:entry>
+                                </L7p:Parameters>
+                            </L7p:Encapsulated>
+                            <L7p:assertionComment>
+                                <L7p:Properties mapValue="included">
+                                    <L7p:entry>
+                                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                                        <L7p:value stringValue="// Query DB or Not"/>
+                                    </L7p:entry>
+                                </L7p:Properties>
+                            </L7p:assertionComment>
+                        </wsp:OneOrMore>
+                        <L7p:assertionComment>
+                            <L7p:Properties mapValue="included">
+                                <L7p:entry>
+                                    <L7p:key stringValue="LEFT.COMMENT"/>
+                                    <L7p:value stringValue="JWT"/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="RIGHT.COMMENT"/>
+                                    <L7p:value stringValue="Validate if access_token is JWT"/>
+                                </L7p:entry>
+                            </L7p:Properties>
+                        </L7p:assertionComment>
+                    </wsp:All>
+                    <wsp:All L7p:Enabled="false" wsp:Usage="Required">
+                        <L7p:AuditDetailAssertion>
+                            <L7p:Detail stringValue="error: invalid_request, error_description: Access token is invalid or revoked or none was given"/>
+                        </L7p:AuditDetailAssertion>
+                        <L7p:Encapsulated encassName="OTK Fail with error message">
+                            <L7p:AssertionComment assertionComment="included">
+                                <L7p:Properties mapValue="included">
+                                    <L7p:entry>
+                                        <L7p:key stringValue="LEFT.COMMENT"/>
+                                        <L7p:value stringValue="992"/>
+                                    </L7p:entry>
+                                </L7p:Properties>
+                            </L7p:AssertionComment>
+                            <L7p:Parameters mapValue="included">
+                                <L7p:entry>
+                                    <L7p:key stringValue="apiPrefix"/>
+                                    <L7p:value stringValue=""/>
+                                </L7p:entry>
+                                <L7p:entry>
+                                    <L7p:key stringValue="givenErrorCode"/>
+                                    <L7p:value stringValue="992"/>
+                                </L7p:entry>
+                            </L7p:Parameters>
+                        </L7p:Encapsulated>
+                        <L7p:assertionComment>
+                            <L7p:Properties mapValue="included">
+                                <L7p:entry>
+                                    <L7p:key stringValue="LEFT.COMMENT"/>
+                                    <L7p:value stringValue="error"/>
+                                </L7p:entry>
+                            </L7p:Properties>
+                        </L7p:assertionComment>
+                    </wsp:All>
+                    <L7p:assertionComment>
+                        <L7p:Properties mapValue="included">
+                            <L7p:entry>
+                                <L7p:key stringValue="RIGHT.COMMENT"/>
+                                <L7p:value stringValue="Validate either JWT or UUID"/>
+                            </L7p:entry>
+                        </L7p:Properties>
+                    </L7p:assertionComment>
+                </wsp:OneOrMore>
+                <L7p:Encapsulated encassName="OTK OAuth 2 Token Validation - BEARER">
+                    <L7p:Parameters mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="tokenValues"/>
+                            <L7p:value stringValue="resp"/>
+                        </L7p:entry>
+                    </L7p:Parameters>
+                </L7p:Encapsulated>
+                <L7p:assertionComment>
+                    <L7p:Properties mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="LEFT.COMMENT"/>
+                            <L7p:value stringValue="Bearer"/>
+                        </L7p:entry>
+                    </L7p:Properties>
+                </L7p:assertionComment>
+            </wsp:All>
+            <wsp:All wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:CaseSensitive booleanValue="false"/>
+                    <L7p:Expression1 stringValue="${oauth2_token_type}"/>
+                    <L7p:Expression2 stringValue="MAC"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:RightValue stringValue="MAC"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:Encapsulated encassName="OTK OAuth 2 Token Validation - MAC">
+                    <L7p:Parameters mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="http_method"/>
+                            <L7p:value stringValue="${request.http.parameter.http_method}"/>
+                        </L7p:entry>
+                        <L7p:entry>
+                            <L7p:key stringValue="tokenValues"/>
+                            <L7p:value stringValue="resp"/>
+                        </L7p:entry>
+                        <L7p:entry>
+                            <L7p:key stringValue="url"/>
+                            <L7p:value stringValue="${request.http.parameter.url}"/>
+                        </L7p:entry>
+                    </L7p:Parameters>
+                </L7p:Encapsulated>
+                <L7p:assertionComment>
+                    <L7p:Properties mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="LEFT.COMMENT"/>
+                            <L7p:value stringValue="MAC"/>
+                        </L7p:entry>
+                    </L7p:Properties>
+                </L7p:assertionComment>
+            </wsp:All>
+            <wsp:All wsp:Usage="Required">
+                <L7p:AuditDetailAssertion>
+                    <L7p:Detail stringValue="WARNING: Server misconfigured! Configure it to support 'Bearer' or 'MAC' token profile"/>
+                </L7p:AuditDetailAssertion>
+                <wsp:OneOrMore wsp:Usage="Required">
+                    <L7p:ComparisonAssertion>
+                        <L7p:CaseSensitive booleanValue="false"/>
+                        <L7p:Expression1 stringValue="${error.code}"/>
+                        <L7p:Expression2 stringValue=""/>
+                        <L7p:Negate booleanValue="true"/>
+                        <L7p:Operator operator="EMPTY"/>
+                        <L7p:Predicates predicates="included">
+                            <L7p:item binary="included">
+                                <L7p:CaseSensitive booleanValue="false"/>
+                                <L7p:Negated booleanValue="true"/>
+                                <L7p:Operator operator="EMPTY"/>
+                                <L7p:RightValue stringValue=""/>
+                            </L7p:item>
+                        </L7p:Predicates>
+                    </L7p:ComparisonAssertion>
+                    <L7p:SetVariable>
+                        <L7p:Expression><![CDATA[000]]></L7p:Expression>
+                        <L7p:VariableToSet stringValue="error.code"/>
+                    </L7p:SetVariable>
+                    <L7p:assertionComment>
+                        <L7p:Properties mapValue="included">
+                            <L7p:entry>
+                                <L7p:key stringValue="LEFT.COMMENT"/>
+                                <L7p:value stringValue="set code"/>
+                            </L7p:entry>
+                        </L7p:Properties>
+                    </L7p:assertionComment>
+                </wsp:OneOrMore>
+                <L7p:CustomizeErrorResponse>
+                    <L7p:Content stringValueReference="inline"><![CDATA[{ 
+  "result": "invalid",
+   "message": ${error.msg}
+}]]></L7p:Content>
+                    <L7p:ContentType stringValue="application/json; charset=UTF-8"/>
+                    <L7p:ExtraHeaders nameValuePairArray="included"/>
+                    <L7p:HttpStatus stringValue="400"/>
+                </L7p:CustomizeErrorResponse>
+                <L7p:Encapsulated encassName="OTK Fail with error message">
+                    <L7p:AssertionComment assertionComment="included">
+                        <L7p:Properties mapValue="included">
+                            <L7p:entry>
+                                <L7p:key stringValue="LEFT.COMMENT"/>
+                                <L7p:value stringValue="error code"/>
+                            </L7p:entry>
+                            <L7p:entry>
+                                <L7p:key stringValue="RIGHT.COMMENT"/>
+                                <L7p:value stringValue="Error code created by validation assertion"/>
+                            </L7p:entry>
+                        </L7p:Properties>
+                    </L7p:AssertionComment>
+                    <L7p:Parameters mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="apiPrefix"/>
+                            <L7p:value stringValue=""/>
+                        </L7p:entry>
+                        <L7p:entry>
+                            <L7p:key stringValue="givenErrorCode"/>
+                            <L7p:value stringValue="${error.code}"/>
+                        </L7p:entry>
+                    </L7p:Parameters>
+                </L7p:Encapsulated>
+                <L7p:assertionComment>
+                    <L7p:Properties mapValue="included">
+                        <L7p:entry>
+                            <L7p:key stringValue="LEFT.COMMENT"/>
+                            <L7p:value stringValue="error"/>
+                        </L7p:entry>
+                        <L7p:entry>
+                            <L7p:key stringValue="RIGHT.COMMENT"/>
+                            <L7p:value stringValue="Handle validation error"/>
+                        </L7p:entry>
+                    </L7p:Properties>
+                </L7p:assertionComment>
+            </wsp:All>
+            <L7p:assertionComment>
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="LEFT.COMMENT"/>
+                        <L7p:value stringValue="validate"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:assertionComment>
+        </wsp:OneOrMore>
+        <L7p:JsonTransformation>
+            <L7p:DestinationMessageTarget MessageTarget="included">
+                <L7p:OtherTargetMessageVariable stringValue="resp"/>
+                <L7p:Target target="OTHER"/>
+                <L7p:TargetModifiedByGateway booleanValue="true"/>
+            </L7p:DestinationMessageTarget>
+            <L7p:OtherTargetMessageVariable stringValue="resp"/>
+            <L7p:PrettyPrint booleanValue="true"/>
+            <L7p:RootTagString stringValue=""/>
+            <L7p:Target target="OTHER"/>
+        </L7p:JsonTransformation>
+        <L7p:EvaluateJsonPathExpressionV2>
+            <L7p:Expression stringValue=".validation.result"/>
+            <L7p:OtherTargetMessageVariable stringValue="resp"/>
+            <L7p:Target target="OTHER"/>
+            <L7p:VariablePrefix stringValue="validation"/>
+        </L7p:EvaluateJsonPathExpressionV2>
+        <L7p:EvaluateJsonPathExpressionV2>
+            <L7p:Expression stringValue=".validation.expiration"/>
+            <L7p:OtherTargetMessageVariable stringValue="resp"/>
+            <L7p:Target target="OTHER"/>
+            <L7p:VariablePrefix stringValue="expiration"/>
+        </L7p:EvaluateJsonPathExpressionV2>
+        <L7p:SetVariable>
+            <L7p:Expression><![CDATA[application/json; charset=utf-8]]></L7p:Expression>
+            <L7p:VariableToSet stringValue="content-type"/>
+        </L7p:SetVariable>
+        <L7p:HardcodedResponse>
+            <L7p:AssertionComment assertionComment="included">
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="LEFT.COMMENT"/>
+                        <L7p:value stringValue="200"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:AssertionComment>
+            <L7p:ResponseBody><![CDATA[{
+   "result": "${validation.result}",
+   "expiration": ${expiration.result}
+}]]></L7p:ResponseBody>
+            <L7p:ResponseContentType stringValue="${content-type}"/>
+            <L7p:ResponseStatus stringValue="${status}"/>
+        </L7p:HardcodedResponse>
+        <L7p:CommentAssertion>
+            <L7p:Comment stringValue="END OF AUTHORIZATION BLOCK"/>
+        </L7p:CommentAssertion>
+    </wsp:All>
+</wsp:Policy>

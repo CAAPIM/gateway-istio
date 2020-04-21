@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "demo.fullname" . }}-configmap
+  labels:
+    app: {{ template "demo.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    description: Configuration Map for server a
+data:
+  config.yaml: |
+    main:
+        listenport_tls: 8443
+        listenport: 8080
+        certs: "/etc/server_a/privateKeys"
+        #jaeger_host: "zipkin.istio-system.svc.cluster.local"
+        #jaeger_port: 9411
+        jaeger_host: "jaeger-collector.istio-system"
+        jaeger_port: 14268
+        # Possible values of user_manager: internal, broadcom_gateway, ldap
+        user_manager: broadcom_gateway
+
+    broadcom_gateway:
+        host: {{ .Values.stsUrl }}
+        port: 8443
+
+    topichandlers:
+        - server-b-svc: 9080
+  

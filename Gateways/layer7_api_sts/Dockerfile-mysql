@@ -1,0 +1,11 @@
+FROM mysql:5.7
+
+MAINTAINER otk
+
+ENV MYSQL_DATABASE=otk \
+    MYSQL_ROOT_PASSWORD=7layer \
+    MYSQL_USER=gateway \
+    MYSQL_PASSWORD=7layer
+
+COPY ./db_scripts/mysql/init_db.sql /docker-entrypoint-initdb.d/init_db.sql
+COPY ./db_scripts/mysql/otk_db_schema.sql /docker-entrypoint-initdb.d/otk.sql

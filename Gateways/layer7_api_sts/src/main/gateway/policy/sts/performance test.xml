@@ -1,0 +1,80 @@
+<wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy" xmlns:L7p="http://www.layer7tech.com/ws/policy">
+    <wsp:All wsp:Usage="Required">
+        <L7p:CustomizeErrorResponse>
+            <L7p:Content stringValue="API Error: Policy Violation"/>
+            <L7p:ExtraHeaders nameValuePairArray="included"/>
+        </L7p:CustomizeErrorResponse>
+        <L7p:ComparisonAssertion>
+            <L7p:CaseSensitive booleanValue="false"/>
+            <L7p:Expression1 stringValue="${request.http.header.foo}"/>
+            <L7p:Operator operatorNull="null"/>
+            <L7p:Predicates predicates="included">
+                <L7p:item dataType="included">
+                    <L7p:Type variableDataType="string"/>
+                </L7p:item>
+                <L7p:item binary="included">
+                    <L7p:RightValue stringValue="Foo"/>
+                </L7p:item>
+            </L7p:Predicates>
+        </L7p:ComparisonAssertion>
+        <wsp:OneOrMore wsp:Usage="Required">
+            <wsp:All wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:CaseSensitive booleanValue="false"/>
+                    <L7p:Expression1 stringValue="${request.http.header.route}"/>
+                    <L7p:Operator operatorNull="null"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item dataType="included">
+                            <L7p:Type variableDataType="string"/>
+                        </L7p:item>
+                        <L7p:item binary="included">
+                            <L7p:RightValue stringValue="Yes"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:HttpRoutingAssertion>
+                    <L7p:CustomURLs stringArrayValue="included">
+                        <L7p:item stringValue="https://localhost:8443/oauth/manager"/>
+                    </L7p:CustomURLs>
+                    <L7p:ProtectedServiceUrl stringValue="https://broadcom.localdomain:8443/oauth/manager"/>
+                    <L7p:ProxyPassword stringValueNull="null"/>
+                    <L7p:ProxyUsername stringValueNull="null"/>
+                    <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Cookie"/>
+                            </L7p:item>
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="SOAPAction"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:RequestHeaderRules>
+                    <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included"/>
+                    </L7p:RequestParamRules>
+                    <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Set-Cookie"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:ResponseHeaderRules>
+                    <L7p:SamlAssertionVersion intValue="2"/>
+                    <L7p:TlsTrustedCertGoids goidArrayValue="included">
+                        <L7p:item goidValue="f601ed18be74b541ac49f9bc99f39255"/>
+                    </L7p:TlsTrustedCertGoids>
+                    <L7p:TlsTrustedCertNames stringArrayValue="included">
+                        <L7p:item stringValue="broadcom.localdomain"/>
+                    </L7p:TlsTrustedCertNames>
+                </L7p:HttpRoutingAssertion>
+            </wsp:All>
+            <L7p:HardcodedResponse>
+                <L7p:ResponseBody><![CDATA[OK]]></L7p:ResponseBody>
+                <L7p:ResponseContentType stringValue="text/plain; charset=UTF-8"/>
+            </L7p:HardcodedResponse>
+        </wsp:OneOrMore>
+    </wsp:All>
+</wsp:Policy>

@@ -1,0 +1,12 @@
+dependencies:
+- name: hazelcast
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 1.4.0
+- name: sts
+  repository: https://charts.brcmlabs.com
+  version: 1.0.0
+- name: demo
+  repository: https://charts.brcmlabs.com
+  version: 1.0.0
+digest: sha256:3a29c7ebf49db23c6c3831ccb4b02fc1474dee2cc6ca1e6ab09e7154a2ba931f
+generated: "2020-04-03T15:03:51.638745+01:00"

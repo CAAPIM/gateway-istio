@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "edge.gateway.fullname" . }}
+  labels:
+    app: {{ template "edge.gateway.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    description: Configuration Map for gateway
+data:
+  ACCEPT_LICENSE: {{ .Values.global.license.accept | quote}}
+  {{- if (.Values.hazelcast.enabled) }}
+  EXTRA_JAVA_ARGS: {{ template "edge.gateway.java.args" }} -Dcom.l7tech.server.extension.sharedCounterProvider=externalhazelcast -Dcom.l7tech.server.extension.sharedKeyValueStoreProvider=externalhazelcast -Dcom.l7tech.server.extension.sharedClusterInfoProvider=externalhazelcast
+  {{- else }}
+  EXTRA_JAVA_ARGS: {{ template "edge.gateway.java.args" }}
+  {{- end }}
+  SSG_JVM_HEAP: {{ .Values.gateway.heapSize }}
+
+  ENV.PROPERTY.gateway.influxdb.url: {{ .Values.gateway.influxdb.url }}
+  ENV.PROPERTY.gateway.env.tags: {{ .Values.gateway.influxdb.tags }}
+
+  ENV.PROPERTY.gateway.perftest.url: {{ .Values.gateway.perftestUrl }}
+  ENV.PROPERTY.gateway.demo.url:  {{ .Values.gateway.demoUrl }}
+
+  {{ if .Values.gateway.manager.enabled }}
+  SSG_ADMIN_USERNAME: {{.Values.gateway.manager.username }}
+  SSG_ADMIN_PASSWORD: {{.Values.gateway.manager.password }}
+  {{ end }}
+
+  {{- if  .Values.gateway.loadStsCert }}
+  ENV.CERTIFICATE_FILE.stsssl.crt: {{ .Files.Get "files/broadcom.localdomain.cert.pem" | quote }}
+  ENV.CERTIFICATE.stsssl: |-
+    verifyHostname: "false"
+    trustedForSsl: "true"
+    trustedAsSamlAttestingEntity: "false"
+    trustAnchor: "true"
+    revocationCheckingEnabled: "true"
+    trustedForSigningClientCerts: "true"
+    trustedForSigningServerCerts: "true"
+    trustedAsSamlIssuer: "false"
+  {{- end }}
+
+  SSG_CLUSTER_HOST: {{ .Values.gateway.clusterHostname }}
+  ENV.PROPERTY.gateway.audit.setDetailLevel.FINE: 152 7101 7103 9648 9645 7026 7027 4155 150 4716 4114 6306 4100 9655 150 151 11000 4104
+  ENV.PROPERTY.gateway.log.levels: com.l7tech.level \= CONFIG\ncom.l7tech.server.policy.variable.ServerVariables.level \= SEVERE\ncom.l7tech.external.assertions.odata.server.producer.jdbc.GenerateSqlQuery.level \= SEVERE\ncom.l7tech.server.policy.assertion.ServerSetVariableAssertion.level \= SEVERE\ncom.l7tech.external.assertions.comparison.server.ServerComparisonAssertion = SEVERE
+  log-override-properties: |+
+    handlers = com.l7tech.server.log.GatewayRootLoggingHandler, com.l7tech.server.log.ConsoleMessageSink$L7ConsoleHandler
+    com.l7tech.server.log.GatewayRootLoggingHandler.formatter = com.l7tech.util.JsonLogFormatter
+    java.util.logging.SimpleFormatter.format=
+    com.l7tech.server.log.ConsoleMessageSink$L7ConsoleHandler.formatter = com.l7tech.util.JsonLogFormatter
+    com.l7tech.server.log.ConsoleMessageSink$L7ConsoleHandler.level = CONFIG
+  {{- if .Files.Get "files/hazelcast-xml.xml" }}
+  hazelcast-xml: |+
+  {{- tpl (.Files.Get "files/hazelcast-xml.xml") . | nindent 4}}
+  {{- end }}

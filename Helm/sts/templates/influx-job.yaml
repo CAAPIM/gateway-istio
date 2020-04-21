@@ -1,0 +1,44 @@
+## post-install job that create influx database for service metrics and set default retention duration
+## Duration for retention policy and shard group can be set in values.yaml
+---
+apiVersion: "batch/v1"
+kind: "Job"
+metadata:
+  labels:
+    app: {{ template "influxdb.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+    release: "{{ .Release.Name }}"
+  name: influxdb-job
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+        "helm.sh/hook": post-install
+        "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+      labels:
+        app: {{ template "influxdb.fullname" . }}
+        release: "{{ .Release.Name }}"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: influxdb-job
+        image: "{{ .Values.influxdb.curlImage.repository }}:{{ .Values.influxdb.curlImage.tag }}"
+        imagePullPolicy: {{ .Values.influxdb.curlImage.pullPolicy }}
+        command: [
+           "curl", "-i", "-XPOST",
+           "--connect-timeout", "5",
+           "--max-time", "10",
+           "--retry", "20",
+           "--retry-delay", "0",
+           "--retry-connrefused",
+           "--retry-max-time", "300",
+           {{ if .Values.influxdb.fullnameOverride }}
+           "http://{{ .Values.influxdb.fullnameOverride }}:{{ .Values.influxdb.config.http.bind_address }}/query",
+           {{ else }}
+           "http://{{ .Chart.Name }}-influxdb:{{ .Values.influxdb.config.http.bind_address }}/query",
+           {{- end }}
+           "--data-urlencode",
+           "q=CREATE DATABASE {{ .Values.influxdb.serviceMetrics.databaseName }} WITH DURATION {{ .Values.influxdb.serviceMetrics.retentionPolicyDuration }} SHARD DURATION {{ .Values.influxdb.serviceMetrics.shardGroupDuration }}"
+        ]

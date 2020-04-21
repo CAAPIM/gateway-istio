@@ -1,0 +1,15 @@
+dependencies:
+- name: hazelcast
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 1.4.0
+- name: mysql
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 1.6.2
+- name: influxdb
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 1.5.0
+- name: grafana
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 1.21.2
+digest: sha256:578b550b2baca87eab674385adecdcb556b086e81f129da8cbabaa5d487eaa32
+generated: "2020-03-24T22:17:46.639969Z"

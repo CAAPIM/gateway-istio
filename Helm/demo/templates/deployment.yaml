@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-a-dep
+spec:
+  selector:
+    matchLabels:
+      app: server-a-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: server-a-app
+    spec:
+      containers:
+      - name: server-a-container
+        image: {{ .Values.servera.image }}:{{ .Values.servera.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8443
+        - containerPort: 8080
+        # envFrom:
+        #   - configMapRef:
+        #       name: {{ template "demo.fullname" . }}-configmap
+        env:
+          - name: stsUrl
+            value: {{ .Values.stsUrl}}
+          - name: stsNamespace
+            value: {{ .Values.stsNamespace}}
+          - name: stsPort
+            value: {{ .Values.stsPort | quote }}
+          - name: stsUri
+            value: {{ .Values.stsUri }}
+        volumeMounts:
+        - name: certs
+          mountPath: /etc/server_a/privateKeys
+        - name: {{ template "demo.fullname" . }}-configmap
+          readOnly: true
+          mountPath: /etc/server_a
+      volumes:
+      - name: certs
+        secret:
+          secretName: server-a-certs
+      - name: {{ template "demo.fullname" . }}-configmap
+        configMap:
+          name: {{ template "demo.fullname" . }}-configmap
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-b-app
+spec:
+  selector:
+    matchLabels:
+      app: server-b-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: server-b-app
+    spec:
+      containers:
+      - name: server-b-container
+        image: {{ .Values.serverb.image }}:{{ .Values.serverb.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9080

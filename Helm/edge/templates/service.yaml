@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: {{ template "edge.gateway.fullname" . }}
+    chart: {{ template "edge.gateway.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  name: {{ template "edge.gateway.fullname" . }}
+  annotations:
+    description: "The edge Gateway service"
+spec:
+  selector:
+    app: {{ template "edge.gateway.fullname" . }}
+    release: {{ .Release.Name }}
+{{ if and .Values.istio.enabled .Values.istio.ingressgateway }}
+  type: ClusterIP
+{{ else }}
+  type: LoadBalancer
+{{ end }}
+  ports:
+{{- range .Values.service.ports }}
+    - protocol: TCP
+      port: {{ .external }}
+      targetPort: {{ .internal }}
+      name: {{ .name | quote }}
+{{- end }}

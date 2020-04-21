@@ -1,0 +1,73 @@
+/*
+ * Copyright (c) 2018 CA. All rights reserved.
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.ca.apim.gateway:gateway-developer-plugin:0.8.+"
+        classpath "com.ca.apim.gateway:gateway-export-plugin:0.8.+"
+        classpath "com.bmuschko:gradle-docker-plugin:4.6.2"
+    }
+}
+
+apply plugin: 'com.ca.apim.gateway.gateway-export-plugin'
+apply plugin: 'com.ca.apim.gateway.gateway-developer-plugin'
+
+group 'tactical'
+version = '1.0.0'
+
+GatewayConnection {
+    url = 'https://localhost:8443/restman'
+}
+
+GatewayExportConfig {
+    folderPath = '/sts'
+}
+
+repositories {
+    flatDir {
+        dirs new File(project.rootDir, "lib")
+    }
+    gradlePluginPortal()
+    mavenCentral()
+    jcenter()
+}
+
+wrapper {
+    gradleVersion = '4.10'
+}
+dependencies {
+  //  bundle group: 'influxdb', name: 'influxdb', version: '1.0.0', ext: 'bundle'
+}
+//
+// Import task types
+import com.bmuschko.gradle.docker.tasks.image.*
+
+// Use task types
+task buildDockerImage(type: DockerBuildImage) {
+    apply plugin: 'com.bmuschko.docker-remote-api'
+    inputDir.set(file('./'))
+    tags.add(System.getProperty("imageName")+ ":" + System.getProperty("imageTag"))
+    labels = ['org.opencontainers.image.created': new Date().format("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone("UTC"))]
+    pull.set(true)
+}
+repositories {
+    flatDir {
+        dirs "lib"
+    }
+}
+dependencies {
+    bundle group: 'otk-single-jdbc', name: 'otk-single-jdbc', version: '5.0.0-SNAPSHOT', ext: 'bundle', classifier: 'full'
+    customassertion group: 'otk-ResponseTypeSupportedCheckAssertion', name: 'otk-ResponseTypeSupportedCheckAssertion', ext: 'jar', version: '5.0.0-SNAPSHOT'
+    customassertion group: 'otk-DateFormatStringAssertion', name: 'otk-DateFormatStringAssertion', ext: 'jar', version: '5.0.0-SNAPSHOT'
+    customassertion group: 'otk-ScopeIssuingAndVerificationAssertions', name: 'otk-ScopeIssuingAndVerificationAssertions', ext: 'jar', version: '5.0.0-SNAPSHOT'
+    bundle group: 'influxdb', name: 'influxdb', version: '1.0.0', ext: 'bundle'
+    bundle group: 'gateway', name: 'gateway', version: '1.0.0', ext: 'bundle'
+}

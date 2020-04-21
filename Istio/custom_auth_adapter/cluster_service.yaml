@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: layer7authadapterservice
+  namespace: istio-system
+  labels:
+    app: layer7authadapter
+spec:
+  type: ClusterIP
+  ports:
+  - name: grpc
+    protocol: TCP
+    port: 44225
+    targetPort: 44225
+  selector:
+    app: layer7authadapter
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: layer7authadapter
+  namespace: istio-system
+  labels:
+    app: layer7authadapter
+spec:
+  selector:
+    matchLabels:
+      app: layer7authadapter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: layer7authadapter
+      annotations:
+        sidecar.istio.io/inject: "false"
+        scheduler.alpha.kubernetes.io/critical-pod: ""
+    spec:
+      containers:
+      - name: layer7authadapter
+        #image: layer7authadapter:latest
+        image: layer7api/oauth_adapter:1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 44225
+        env:
+        - name: stsUrl
+          value: sts-gateway
+        - name: stsNamespace
+          value: default
+        - name: stsPort
+          value: "18888"
+        - name: stsUri
+          value: /auth/istio/v1/token

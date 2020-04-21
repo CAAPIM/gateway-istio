@@ -1,0 +1,22 @@
+nameOverride: ""
+fullnameOverride: ""
+
+servera:
+  image: layer7api/server_a
+  tag: "1.0"
+  pullPolicy: Always
+
+serverb:
+  image: layer7api/server_b
+  tag: "1.0"
+  pullPolicy: Always
+
+# The location of the 'internal' OTK (OAuth Toolkit) Gateway
+stsUrl: sts-gateway
+# Update this if you deploy the parent chart in a different namespace
+stsNamespace: default
+# The additional port published on the STS Gateway - this is part of the STS Image and won't change unless you rebuild and update the underlying
+# image or bootstrap a new bundle with Port mappings
+stsPort: "18888"
+# The istio authorization URI for this demo
+stsUri: /auth/istio/v1/token

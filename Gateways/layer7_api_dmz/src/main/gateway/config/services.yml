@@ -1,0 +1,20 @@
+dmz/performance test:
+  url: "/perftest"
+  policy: "dmz/performance test"
+  httpMethods:
+  - "DELETE"
+  - "POST"
+  - "GET"
+  - "PUT"
+  properties: {}
+  wssProcessingEnabled: false
+dmz/Istio East West Demo App:
+  url: "/*"
+  policy: "dmz/Istio East West Demo App"
+  httpMethods:
+  - "DELETE"
+  - "POST"
+  - "GET"
+  - "PUT"
+  properties: {}
+  wssProcessingEnabled: false

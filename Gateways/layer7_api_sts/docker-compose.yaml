@@ -1,0 +1,71 @@
+# Copyright (c) 2018 CA. All rights reserved.
+# This software may be modified and distributed under the terms
+# of the MIT license.  See the LICENSE file for details.
+
+version: '3.4'
+services:
+  gateway-dev:
+    hostname: localhost
+    image: caapim/gateway:9.4.00
+    #image: colindemo:latest
+    ports:
+    - "8080:8080"
+    - "8443:8443"
+    - "8000:8000"
+    - "18888:18888"
+    volumes:
+    - /opt/SecureSpan/Gateway/node/default/etc/bootstrap/services/restman
+    - ./build/gateway/layer7api-sts-1.0.0.gw7:/opt/docker/rc.d/layer7api-sts-1.0.0.gw7
+    #- ./build/gateway/bundle:/opt/SecureSpan/Gateway/node/default/etc/bootstrap/bundle/config
+    secrets:
+    - source: license
+      target: /opt/SecureSpan/Gateway/node/default/etc/bootstrap/license/license.xml
+    environment:
+      ACCEPT_LICENSE: "true"
+      SSG_ADMIN_USERNAME: "admin"
+      SSG_ADMIN_PASSWORD: "password"
+      # OTK Environment required
+      ENV.JDBC_CONNECTION.OAuth: '{
+                                      "driverClass": "com.mysql.jdbc.Driver",
+                                      "jdbcUrl": "jdbc:mysql://mysql-server:3306/otk",
+                                      "properties": {
+                                        "EnableCancelTimeout": "true"
+                                      },
+                                      "user": "gateway",
+                                      "password": "7layer",
+                                      "minimumPoolSize": 3,
+                                      "maximumPoolSize": 15
+                                    }'
+      ENV.PROPERTY.gateway.otk.port: "8443"
+      ENV.PROPERTY.gateway.influxdb.url: "influxdb"
+      ENV.PROPERTY.gateway.env.tags: "env=dev"
+      ENV.CONTEXT_VARIABLE_PROPERTY.OTKStorageConfiguration.dbsystem: "mysql"
+      #ENV.CONTEXT_VARIABLE_PROPERTY.influxdb.influxdb: "influxdb-server"
+      #ENV.CONTEXT_VARIABLE_PROPERTY.influxdb.tags: "env=dev"
+      ENV.CONTEXT_VARIABLE_PROPERTY.influxdb.influxdb: "influxdb.url"
+      ENV.CONTEXT_VARIABLE_PROPERTY.influxdb.tags: "env=dev"
+    depends_on:
+      - mysql-server
+      - influxdb-server
+  mysql-server:
+    build:
+      context: .
+      dockerfile: Dockerfile-mysql
+    image: docker.brcmlabs.com/tactical/otk_mysql:latest
+    ports:
+      - "3306"
+    command:
+      - "--character-set-server=utf8"
+      - "--innodb_log_buffer_size=32M"
+      - "--innodb_log_file_size=80M"
+      - "--max_allowed_packet=8M"
+
+  influxdb-server:
+     image: influxdb:1.5
+     volumes:
+     - ./tmp/influxdb:/var/lib/influxdb
+     ports:
+     - "8086:8086"
+secrets:
+  license:
+    file: ./docker/license.xml

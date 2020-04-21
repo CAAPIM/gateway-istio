@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: "1.0"
+description: This Helm Chart deploys the server_a, server_b examples and the layer7auth adapter.
+name: demo
+version: 1.0.0

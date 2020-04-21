@@ -1,0 +1,21 @@
+{{ if and .Values.istio.enabled .Values.istio.ingressgateway }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: gateway-vs
+spec:
+  hosts:
+  - {{ .Values.gateway.clusterHostname }}
+  gateways:
+  - layer7-gateway
+  tls:
+  - match:
+    - port: 443
+      sni_hosts:
+      - {{ .Values.gateway.clusterHostname }}
+    route:
+    - destination:
+        host: {{ template "edge.gateway.fullname" . }}
+        port:
+          number: 443
+{{ end }}

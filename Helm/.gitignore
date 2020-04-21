@@ -1,0 +1,2 @@
+# Prevent packaged charts from being committed
+*.tgz

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<l7:Bundle xmlns:l7="http://ns.l7tech.com/2010/04/gateway-management">
+    <l7:References>
+        <l7:Item>
+            <l7:Name>io.httpCoreConcurrency</l7:Name>
+            <l7:Id>0000000000000000fffffffffff5519e</l7:Id>
+            <l7:Type>CLUSTER_PROPERTY</l7:Type>
+            <l7:TimeStamp>2017-11-20T18:19:27.511Z</l7:TimeStamp>
+            <l7:Resource>
+                <l7:ClusterProperty id="0000000000000000fffffffffff5519e" version="1">
+                    <l7:Name>io.httpCoreConcurrency</l7:Name>
+                    <l7:Value>100</l7:Value>
+                </l7:ClusterProperty>
+            </l7:Resource>
+        </l7:Item>
+        <l7:Item>
+            <l7:Name>io.httpMaxConcurrency</l7:Name>
+            <l7:Id>0000000000000000fffffffffff5519d</l7:Id>
+            <l7:Type>CLUSTER_PROPERTY</l7:Type>
+            <l7:TimeStamp>2017-11-20T18:19:27.511Z</l7:TimeStamp>
+            <l7:Resource>
+                <l7:ClusterProperty id="0000000000000000fffffffffff5519d" version="1">
+                    <l7:Name>io.httpMaxConcurrency</l7:Name>
+                    <l7:Value>110</l7:Value>
+                </l7:ClusterProperty>
+            </l7:Resource>
+        </l7:Item>
+    </l7:References>
+    <l7:Mappings>
+        <l7:Mapping action="NewOrUpdate" srcId="0000000000000000fffffffffff5519e" srcUri="http://localhost:8080/restman/1.0/clusterProperties/0000000000000000fffffffffff5519e" type="CLUSTER_PROPERTY">
+            <l7:Properties>
+                <l7:Property key="MapBy">
+                    <l7:StringValue>name</l7:StringValue>
+                </l7:Property>
+            </l7:Properties>
+        </l7:Mapping>
+        <l7:Mapping action="NewOrUpdate" srcId="0000000000000000fffffffffff5519d" srcUri="http://localhost:8080/restman/1.0/clusterProperties/0000000000000000fffffffffff5519d" type="CLUSTER_PROPERTY">
+            <l7:Properties>
+                <l7:Property key="MapBy">
+                    <l7:StringValue>name</l7:StringValue>
+                </l7:Property>
+            </l7:Properties>
+        </l7:Mapping>
+    </l7:Mappings>
+</l7:Bundle>

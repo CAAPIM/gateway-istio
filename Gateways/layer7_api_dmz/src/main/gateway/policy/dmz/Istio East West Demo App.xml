@@ -1,0 +1,537 @@
+<wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy" xmlns:L7p="http://www.layer7tech.com/ws/policy">
+    <wsp:All wsp:Usage="Required">
+        <L7p:SetVariable>
+            <L7p:Expression><![CDATA[${gateway.demo.url}]]></L7p:Expression>
+            <L7p:VariableToSet stringValue="testUrl"/>
+        </L7p:SetVariable>
+        <wsp:OneOrMore wsp:Usage="Required">
+            <wsp:All wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:Expression1 stringValue="${request.http.uri}"/>
+                    <L7p:Expression2 stringValue="/login"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:RightValue stringValue="/login"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:AddHeader>
+                    <L7p:HeaderName stringValue="x-custom-token"/>
+                    <L7p:HeaderValue stringValue="abc"/>
+                    <L7p:RemoveExisting booleanValue="true"/>
+                </L7p:AddHeader>
+                <L7p:AddHeader>
+                    <L7p:HeaderName stringValue="content-type"/>
+                    <L7p:HeaderValue stringValue="application/json"/>
+                    <L7p:RemoveExisting booleanValue="true"/>
+                </L7p:AddHeader>
+                <L7p:HttpRoutingAssertion>
+                    <L7p:FailOnErrorStatus booleanValue="false"/>
+                    <L7p:ProtectedServiceUrl stringValue="${testUrl}/login"/>
+                    <L7p:ProxyPassword stringValueNull="null"/>
+                    <L7p:ProxyUsername stringValueNull="null"/>
+                    <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Cookie"/>
+                            </L7p:item>
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="SOAPAction"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:RequestHeaderRules>
+                    <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included"/>
+                    </L7p:RequestParamRules>
+                    <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Set-Cookie"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:ResponseHeaderRules>
+                    <L7p:SamlAssertionVersion intValue="2"/>
+                </L7p:HttpRoutingAssertion>
+            </wsp:All>
+            <wsp:All wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:Expression1 stringValue="${request.http.uri}"/>
+                    <L7p:Expression2 stringValue="/register"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:RightValue stringValue="/register"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:AddHeader>
+                    <L7p:HeaderName stringValue="x-custom-token"/>
+                    <L7p:HeaderValue stringValue="abc"/>
+                    <L7p:RemoveExisting booleanValue="true"/>
+                </L7p:AddHeader>
+                <L7p:AddHeader>
+                    <L7p:HeaderName stringValue="content-type"/>
+                    <L7p:HeaderValue stringValue="application/json"/>
+                    <L7p:RemoveExisting booleanValue="true"/>
+                </L7p:AddHeader>
+                <L7p:HttpRoutingAssertion>
+                    <L7p:FailOnErrorStatus booleanValue="false"/>
+                    <L7p:ProtectedServiceUrl stringValue="${testUrl}/register"/>
+                    <L7p:ProxyPassword stringValueNull="null"/>
+                    <L7p:ProxyUsername stringValueNull="null"/>
+                    <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Cookie"/>
+                            </L7p:item>
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="SOAPAction"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:RequestHeaderRules>
+                    <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included"/>
+                    </L7p:RequestParamRules>
+                    <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Set-Cookie"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:ResponseHeaderRules>
+                    <L7p:SamlAssertionVersion intValue="2"/>
+                </L7p:HttpRoutingAssertion>
+            </wsp:All>
+            <wsp:All wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:Expression1 stringValue="${request.http.uri}"/>
+                    <L7p:Expression2 stringValue="/topic"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:RightValue stringValue="/topic"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:ComparisonAssertion>
+                    <L7p:CaseSensitive booleanValue="false"/>
+                    <L7p:Expression1 stringValue="${request.http.method}"/>
+                    <L7p:Expression2 stringValue="POST"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:RightValue stringValue="POST"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:AddHeader>
+                    <L7p:Enabled booleanValue="false"/>
+                    <L7p:HeaderName stringValue="x-custom-token"/>
+                    <L7p:HeaderValue stringValue="abc"/>
+                    <L7p:RemoveExisting booleanValue="true"/>
+                </L7p:AddHeader>
+                <L7p:AddHeader>
+                    <L7p:HeaderName stringValue="content-type"/>
+                    <L7p:HeaderValue stringValue="application/json"/>
+                    <L7p:RemoveExisting booleanValue="true"/>
+                </L7p:AddHeader>
+                <L7p:HttpRoutingAssertion>
+                    <L7p:FailOnErrorStatus booleanValue="false"/>
+                    <L7p:ProtectedServiceUrl stringValue="${testUrl}/topic"/>
+                    <L7p:ProxyPassword stringValueNull="null"/>
+                    <L7p:ProxyUsername stringValueNull="null"/>
+                    <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Cookie"/>
+                            </L7p:item>
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="SOAPAction"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:RequestHeaderRules>
+                    <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included"/>
+                    </L7p:RequestParamRules>
+                    <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Set-Cookie"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:ResponseHeaderRules>
+                    <L7p:SamlAssertionVersion intValue="2"/>
+                </L7p:HttpRoutingAssertion>
+            </wsp:All>
+            <wsp:All wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:Expression1 stringValue="${request.http.uri}"/>
+                    <L7p:Expression2 stringValue="/topic"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:RightValue stringValue="/topic"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:ComparisonAssertion>
+                    <L7p:CaseSensitive booleanValue="false"/>
+                    <L7p:Expression1 stringValue="${request.http.method}"/>
+                    <L7p:Expression2 stringValue="GET"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:RightValue stringValue="GET"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:AddHeader>
+                    <L7p:HeaderName stringValue="content-type"/>
+                    <L7p:HeaderValue stringValue="application/json"/>
+                    <L7p:RemoveExisting booleanValue="true"/>
+                </L7p:AddHeader>
+                <L7p:HttpRoutingAssertion>
+                    <L7p:FailOnErrorStatus booleanValue="false"/>
+                    <L7p:ProtectedServiceUrl stringValue="${testUrl}/topic"/>
+                    <L7p:ProxyPassword stringValueNull="null"/>
+                    <L7p:ProxyUsername stringValueNull="null"/>
+                    <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Cookie"/>
+                            </L7p:item>
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="SOAPAction"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:RequestHeaderRules>
+                    <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included"/>
+                    </L7p:RequestParamRules>
+                    <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                        <L7p:ForwardAll booleanValue="true"/>
+                        <L7p:Rules httpPassthroughRules="included">
+                            <L7p:item httpPassthroughRule="included">
+                                <L7p:Name stringValue="Set-Cookie"/>
+                            </L7p:item>
+                        </L7p:Rules>
+                    </L7p:ResponseHeaderRules>
+                    <L7p:SamlAssertionVersion intValue="2"/>
+                </L7p:HttpRoutingAssertion>
+            </wsp:All>
+            <L7p:HardcodedResponse>
+                <L7p:ResponseBody><![CDATA[<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>East/West Demo app</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css" />
+    <style type="text/css">
+        #map {
+            height: 65%;
+            width: 100%;
+        }
+
+        html,
+        body {
+            height: 98.5%;
+            margin: 0;
+            padding: 0;
+            font-family: Abel;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <nav>
+        <div style="background-color: black;" class="nav-wrapper">
+            <a href="#" style="margin-left: 10px;" class="brand-logo">East/West Demo app</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a onclick="showLoginModal()">Login</a></li>
+                <li><a onclick="showRegisterModal()">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div style="height:35%;" class="row">
+
+        <div style="width:50%; float:left; padding:15px;">
+
+            <h5></h5>
+
+            <div class="input-field">
+                <h6>Add Topic</h6>
+                <input id="newTopic" type="text" class="browser-default" />
+            </div>
+
+
+            <div onclick="addTopic();" class="btn">Create</div>
+
+        </div>
+
+        <div style="width:50%; float: right;padding:15px;">
+            <div class="input-field">
+                <h6>Select Topic</h6>
+                <select onchange="setTopicDetail()" id="topics" type="text" class="browser-default">
+                </select>
+            </div>
+            <br />
+            <h5>Details</h5>
+            <ul id=topicDetails>
+
+            </ul>
+            <!-- <ul id="searchResults" class="collapsible" data-collapsible="accordion">
+                <p style="margin-top:1px;">No results available</p>
+            </ul> -->
+            <!-- <div class="input-field">
+                <h6>Add Comment</h6>
+                <input id="newComment" type=" text" class="browser-default" />
+                <div onclick="addComment();" class="btn">Create</div>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-login" class="modal">
+        <div class="modal-content">
+            <img style="height:30px;float:right;"
+                src="https://media-exp1.licdn.com/dms/image/C4E0BAQGDwy-AGAu-Hg/company-logo_200_200/0?e=2159024400&v=beta&t=wDMj0JQqOXZ1gCEquQSq7Gw-nQjsDV5R1ZejjQz5ke4" />
+            <h4>Login</h4>
+            <p>Please login</p>
+            <form class="col s12">
+                <div class="row">
+
+                    <div class="input-field col s12">
+                        <label for="username">Username</label>
+                        <input name="username" value="" id="username" type="text">
+                    </div>
+
+                    <div class="input-field col s12">
+                        <label for="password">Password</label>
+                        <input name="password" id="password" value="" type="password">
+
+                    </div>
+                    <a onclick="login()" class="modal-action modal-close waves-effect waves-green btn-flat green">Get
+                        Access Token</a>
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat red white-text">Cancel</a>
+            </form>
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-register" class="modal">
+        <div class="modal-content">
+            <img style="height:30px;float:right;"
+                src="https://media-exp1.licdn.com/dms/image/C4E0BAQGDwy-AGAu-Hg/company-logo_200_200/0?e=2159024400&v=beta&t=wDMj0JQqOXZ1gCEquQSq7Gw-nQjsDV5R1ZejjQz5ke4" />
+            <h4>Register</h4>
+            <p>Create a new user</p>
+            <form class="col s12">
+                <div class="row">
+
+                    <div class="input-field col s12">
+                        <label for="reg_username">Username</label>
+                        <input name="reg_username" value="" id="reg_username" type="text">
+                    </div>
+
+                    <div class="input-field col s12">
+                        <label for="reg_password">Password</label>
+                        <input name="reg_password" id="reg_password" value="" type="password">
+
+                    </div>
+                    <a onclick="register()"
+                        class="modal-action modal-close waves-effect waves-green btn-flat green">Register and login</a>
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat red white-text">Cancel</a>
+            </form>
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+    </div>
+
+
+    </script>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+    <script>
+
+        function login() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "/login",
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify({ "username": username, "password": password })
+            }
+
+            $.ajax(settings).done(function (response) {
+                access_token = response;
+                setUser(username);
+                listTopics();
+                $('#modal-login').modal('close');
+            }).fail((error) => {
+                alert(error.responseText)
+            });
+
+        }
+
+        function register() {
+            var username = document.getElementById("reg_username").value;
+            var password = document.getElementById("reg_password").value;
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "/register",
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify({ "username": username, "password": password, "name": username, "roles": ["user", "admin"] })
+            }
+
+            $.ajax(settings).done((response) => {
+                access_token = response;
+                setUser(username);
+                listTopics();
+                $('#modal-register').modal('close');
+            }).fail((error) => {
+                alert(error.responseText)
+            });
+        }
+
+        function listTopics() {
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "/topic",
+                "method": "GET",
+                "headers": {
+                    "Authorization": "Bearer " + access_token
+                }
+            }
+
+            $.ajax(settings).done((response) => {
+                var topicOpts = document.getElementById("topics")
+                topics = JSON.parse(response);
+                
+                for (let i = 0; i < topics.length; i++) {
+                    topicOpts.innerHTML += '<option value="'+ topics[i].title +'">' + topics[i].title + '</option>'
+                }
+                setTopicDetail();
+
+            }).fail((error) => {
+                alert(error.responseText)
+            });
+        }
+
+        function addTopic() {
+            var newTopic = document.getElementById("newTopic").value;
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "/topic",
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + access_token
+                },
+                "data": JSON.stringify({ "title": newTopic, "body":"This is just a test topic", "keywords":["kubernetes","mesh"] })
+            }
+
+            $.ajax(settings).done((response) => {
+                document.getElementById("newTopic").value = "";
+                listTopics();
+            }).fail((error) => {
+                alert(error.responseText)
+            });
+        }
+
+        function setTopicDetail(){
+            var selectedTopic = document.getElementById("topics").value
+            var topicDetails = document.getElementById("topicDetails");
+            topicDetails.innerHTML = '';
+            for (let i = 0; i < topics.length; i++) {
+                if(topics[i].title == selectedTopic){
+                    topicDetails.innerHTML = '<li>Body: '+ topics[i].body + '</li><li>Created: ' + topics[i].created + '</li><li>Keywords: '+ JSON.stringify(topics[i].keywords) +'</li>'
+                }
+                }
+            
+        }
+
+
+        // function addComment() {
+        //     var comment = document.getElementById("newComment").value;
+        //     var password = document.getElementById("reg_password").value;
+        //     var settings = {
+        //         "async": true,
+        //         "crossDomain": true,
+        //         "url": "/register",
+        //         "method": "POST",
+        //         "headers": {
+        //             "Content-Type": "application/json"
+        //         },
+        //         "data": JSON.stringify({ "username": username, "password": password, "name": username, "roles": ["user", "admin"] })
+        //     }
+
+        //     $.ajax(settings).done((response) => {
+        //         access_token = response;
+        //         setUser(username);
+        //         $('#modal-register').modal('close');
+        //     }).fail((error) => {
+        //         alert(error.responseText)
+        //     });
+        // }
+
+        const showLoginModal = () => { $('#modal-login').modal('open'); }
+        const showRegisterModal = () => { $('#modal-register').modal('open'); }
+        const setUser = (user) => {
+            document.getElementById("nav-mobile").innerHTML = '<li><a>' + user + '</a></li>'
+        };
+        $('.modal').modal();
+        // $('#modal-login').modal('open');
+        // $('#modal-register').modal('open');
+        $('select').material_select();
+        var locations = [];
+        var access_token = '';
+        var searchResults = '';
+        var topics = '';
+
+
+    </script>
+
+
+</body>
+
+</html>]]></L7p:ResponseBody>
+                <L7p:ResponseContentType stringValue="text/html; charset=UTF-8"/>
+            </L7p:HardcodedResponse>
+        </wsp:OneOrMore>
+    </wsp:All>
+</wsp:Policy>

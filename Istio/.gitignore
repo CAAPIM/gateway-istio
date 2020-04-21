@@ -1,0 +1,2 @@
+# Istio is downloaded in make install no need to push it.
+istio*

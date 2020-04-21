@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sts.gateway.fullname" . }}
+  labels:
+    app: {{ template "sts.gateway.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    description: Configuration Map for gateway
+data:
+  ACCEPT_LICENSE: {{ .Values.global.license.accept | quote}}
+  {{- if (.Values.hazelcast.enabled) }}
+  EXTRA_JAVA_ARGS: {{ template "sts.gateway.java.args" }} -Dcom.l7tech.server.extension.sharedCounterProvider=externalhazelcast -Dcom.l7tech.server.extension.sharedKeyValueStoreProvider=externalhazelcast -Dcom.l7tech.server.extension.sharedClusterInfoProvider=externalhazelcast
+  {{- else }}
+  EXTRA_JAVA_ARGS: {{ template "sts.gateway.java.args" }}
+  {{- end }}
+  ENV.CONTEXT_VARIABLE_PROPERTY.OTKStorageConfiguration.dbsystem: {{ .Values.gateway.otk.storageType}}
+  SSG_JVM_HEAP: {{ .Values.gateway.heapSize }}
+
+  ENV.PROPERTY.gateway.influxdb.url: {{ .Values.gateway.influxdb.url }}
+  ENV.PROPERTY.gateway.env.tags: {{ .Values.gateway.influxdb.tags }}
+  ENV.PROPERTY.gateway.otk.port: {{ .Values.gateway.otk.port | quote }}
+  
+  ENV.JDBC_CONNECTION.OAuth: '{ "driverClass": "com.mysql.jdbc.Driver", "jdbcUrl": "jdbc:mysql://otk-mysql:3306/otk_db",
+            "properties": { "EnableCancelTimeout": "true" }, "user": "gateway", "password":
+            "7layer", "minimumPoolSize": 3, "maximumPoolSize": 15 }'
+
+
+  {{ if .Values.gateway.manager.enabled }}
+  SSG_ADMIN_USERNAME: {{.Values.gateway.manager.username }}
+  SSG_ADMIN_PASSWORD: {{.Values.gateway.manager.password }}
+  {{ end }}
+
+  SSG_CLUSTER_HOST: broadcom.localdomain
+
+  {{- if  .Values.gateway.customTlsKey.enabled }}
+  ENV.PRIVATE_KEY.ssl: '{"algorithm":"RSA", "keyPassword":"7layer"}'
+  ENV.CERTIFICATE_FILE.defaultssl.crt: {{ .Files.Get "files/broadcom.localdomain.cert.pem" | b64enc | quote }}       
+  {{- end }}
+
+
+  ENV.PROPERTY.gateway.audit.setDetailLevel.FINE: 152 7101 7103 9648 9645 7026 7027 4155 150 4716 4114 6306 4100 9655 150 151 11000 4104
+  ENV.PROPERTY.gateway.log.levels: com.l7tech.level \= CONFIG\ncom.l7tech.server.policy.variable.ServerVariables.level \= SEVERE\ncom.l7tech.external.assertions.odata.server.producer.jdbc.GenerateSqlQuery.level \= SEVERE\ncom.l7tech.server.policy.assertion.ServerSetVariableAssertion.level \= SEVERE\ncom.l7tech.external.assertions.comparison.server.ServerComparisonAssertion = SEVERE
+  log-override-properties: |+
+    handlers = com.l7tech.server.log.GatewayRootLoggingHandler, com.l7tech.server.log.ConsoleMessageSink$L7ConsoleHandler
+    com.l7tech.server.log.GatewayRootLoggingHandler.formatter = com.l7tech.util.JsonLogFormatter
+    java.util.logging.SimpleFormatter.format=
+    com.l7tech.server.log.ConsoleMessageSink$L7ConsoleHandler.formatter = com.l7tech.util.JsonLogFormatter
+    com.l7tech.server.log.ConsoleMessageSink$L7ConsoleHandler.level = CONFIG
+  {{- if .Files.Get "files/hazelcast-xml.xml" }}
+  hazelcast-xml: |+
+  {{- tpl (.Files.Get "files/hazelcast-xml.xml") . | nindent 4}}
+  {{- end }}

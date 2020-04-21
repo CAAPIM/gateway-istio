@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: {{ template "edge.gateway.fullname" . }}-configmap
+  name: {{ template "edge.gateway.fullname" . }}
+  labels:
+    app: {{ template "edge.gateway.name" . }}
+    chart: {{ template "edge.gateway.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "edge.gateway.fullname" . }}
+  replicas: {{ .Values.replicas }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+{{- if .Values.updateStrategy }}
+  strategy:
+{{ toYaml .Values.updateStrategy | indent 4 }}
+{{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "edge.gateway.fullname" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.container.image }}:{{ .Values.container.tag }}
+          imagePullPolicy: {{ .Values.container.pullPolicy }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          ports:
+            {{- range .Values.service.ports }}
+            - containerPort: {{ .internal }}
+            {{- end }}
+          volumeMounts:
+{{- if .Values.gateway.env.gatewayPrivateKeys }}
+            - name: gateway-private-keys
+              mountPath: /opt/SecureSpan/Gateway/node/default/etc/bootstrap/env/config/privateKeys
+{{- end }}
+            - name: {{ template "edge.gateway.fullname" . }}-license-xml
+              mountPath: /opt/SecureSpan/Gateway/node/default/etc/bootstrap/license/license.xml
+              subPath: license.xml
+            - name: {{ template "edge.gateway.fullname" . }}-hazelcast-client
+              mountPath: /opt/SecureSpan/Gateway/node/default/etc/bootstrap/assertions/ExternalHazelcastSharedStateProviderAssertion/hazelcast-client.xml
+              subPath: hazelcast-client.xml
+            - name: {{ template "edge.gateway.fullname" . }}-log-config-override
+              mountPath: /opt/SecureSpan/Gateway/node/default/etc/conf/log-override.properties
+              subPath: log-override.properties
+          envFrom:
+            - configMapRef:
+                name: {{ template "edge.gateway.fullname" . }}
+          env:
+{{- if  .Values.gateway.customTlsKey.enabled }}
+            - name: SSG_SSL_KEY_PEM
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gateway.customTlsKey.secretName }}
+                  key: {{ .Values.gateway.customTlsKey.pem }}
+            - name: SSG_SSL_KEY_PEM_CERTS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gateway.customTlsKey.secretName }}
+                  key: {{ .Values.gateway.customTlsKey.cert }}
+{{- end }}
+  
+{{- range $name, $value := .Values.gateway.env }}
+{{- if not (empty $value) }}
+            - name: {{ $name | quote }}
+              value: {{ $value | quote }}
+{{- end }}
+{{- end }}
+{{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            exec:
+              command:
+              - /opt/docker/rc.d/diagnostic/health_check.sh
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+{{- end }}
+{{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            exec:
+              command:
+              - /opt/docker/rc.d/diagnostic/health_check.sh
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+{{- end }}
+      volumes:
+{{- if .Values.gateway.env.gatewayPrivateKeys }}
+        - name: edge.gateway-private-keys
+          secret:
+            secretName: edge.gateway-private-keys
+{{- end }}
+        - name: {{ template "edge.gateway.fullname" . }}-license-xml
+          secret:
+            secretName: {{ template "edge.gateway.fullname" .}}-license
+            items:
+            - key: license
+              path: license.xml
+        - name: {{ template "edge.gateway.fullname" . }}-hazelcast-client
+          configMap:
+            name: {{ template "edge.gateway.fullname" . }}
+            items:
+            - key: hazelcast-xml
+              path: hazelcast-client.xml
+        - name: {{ template "edge.gateway.fullname" . }}-log-config-override
+          configMap:
+            name: {{ template "edge.gateway.fullname" . }}
+            items:
+            - key: log-override-properties
+              path: log-override.properties

@@ -1,0 +1,7 @@
+istio-mixer:
+  protocol: "HTTP"
+  port: 18888
+  enabledFeatures:
+  - "Published service message input"
+  properties:
+    threadPoolSize: "20"

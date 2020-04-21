@@ -1,0 +1,18 @@
+sts/istio-mixer:
+  url: "/auth/istio/v1/token"
+  policy: "sts/istio-mixer"
+  httpMethods:
+  - "POST"
+  - "GET"
+  properties: {}
+  wssProcessingEnabled: false
+sts/performance test:
+  url: "/perftest"
+  policy: "sts/performance test"
+  httpMethods:
+  - "DELETE"
+  - "POST"
+  - "GET"
+  - "PUT"
+  properties: {}
+  wssProcessingEnabled: false

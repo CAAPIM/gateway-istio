@@ -1,0 +1,129 @@
+nameOverride: ""
+fullnameOverride: "edge-gateway"
+
+# Number of Edge Gateways to deploy
+replicas: 1
+revisionHistoryLimit: 10
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# Global License (Gateway 9.x)
+global:
+  license:
+    value:
+    accept: false
+
+# Creates istio service
+istio:
+  enabled: true
+# Configures the Edge Gateway as an Istio Gateway - setting this to false will expose the Edge Gateway on a standard L4 load balancer
+  ingressgateway: true
+
+# Deploys the Demo Applications
+demo:
+  enabled: true
+
+# Deploys the STS Gateway
+sts:
+  enabled: true
+
+container:
+  image: layer7api/edge
+  tag: "1.1"
+  pullPolicy: Always
+# The EDGE Gateway is external facing by default
+service:
+  ports:
+    - name: https
+      internal: 8443
+      external: 443
+    - name: management
+      internal: 9443
+      external: 9443
+# EDGE Gateway Resource Defaults
+resources:
+  requests:
+    memory: 2Gi
+    cpu: 1
+  limits:
+    memory: 4Gi
+    cpu: 3
+
+# Gateway Configuration
+gateway:
+# Cluster Hostname - changing this has an impact in several other places
+# proceed with caution
+  clusterHostname: broadcom.localdomain
+# Configuration for demo EDGE services
+  perftestUrl: https://sts-gateway:8443/oauth/manager
+  demoUrl: http://server-a-svc:8080
+# InfluxDb URL and tags - the sts tag is what's visible in the Grafana dashboard
+  influxdb:
+    url: influxdb
+    tags: env=edge
+# This enables/disables Policy Manager Access - the username/password are used in the demo, you can register your own user.
+  manager:
+    enabled: true
+    username: admin
+    password: 7layer
+
+  heapSize: "2g"
+  javaArgs: ""
+  loadStsCert: true
+  customTlsKey:
+    enabled: false
+    secretName: gw-tls
+    cert: tls.crt
+    pem: tls.key
+  env:
+    gatewayPrivateKeys: false
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  timeoutSeconds: 1
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 20
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  failureThreshold: 20
+  timeoutSeconds: 1
+  periodSeconds: 10
+  successThreshold: 1
+
+# Settings for Hazelcast - https://github.com/helm/charts/tree/master/stable/hazelcast
+hazelcast:
+  enabled: true
+  fullnameOverride: edge-hazelcast
+  hazelcast:
+  # configurationFiles are Hazelcast configuration files
+    # rest is a flag used to enable REST endpoints for Hazelcast member
+    rest: true
+    # javaOpts are additional JAVA_OPTS properties for Hazelcast member
+    javaOpts:
+    configurationFiles:
+      hazelcast.xml: |-
+        <?xml version="1.0" encoding="UTF-8"?>
+        <hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.10.xsd"
+                       xmlns="http://www.hazelcast.com/schema/config"
+                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <properties>
+            <property name="hazelcast.discovery.enabled">true</property>
+          </properties>
+          <network>
+            <join>
+              <multicast enabled="false"/>
+              <kubernetes enabled="true">
+                <service-name>${serviceName}</service-name>
+                <namespace>${namespace}</namespace>
+                <resolve-not-ready-addresses>true</resolve-not-ready-addresses>
+              </kubernetes>
+            </join>
+          </network>
+        </hazelcast>

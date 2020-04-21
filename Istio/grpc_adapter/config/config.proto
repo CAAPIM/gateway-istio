@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+// config for grpc_adapter
+package adapter.grpc_adapter.config;
+
+import "gogoproto/gogo.proto";
+
+option go_package="config";
+
+// config for layer7authadapter
+message Params {
+  
+    // header name to check for custom token
+    string auth_key = 1;
+}

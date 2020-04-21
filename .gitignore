@@ -1,0 +1,3 @@
+# Ommiting local IDE resources
+/raw resources/*
+.DS_Store
