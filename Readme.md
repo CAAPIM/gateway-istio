@@ -143,8 +143,7 @@ There are a few pre-requisites that we'll need to cover before we get Started
     ```
     $ mkdir <my project>
     $ cd <my project>
-    $ git clone git clone ssh://git@gitlab.brcmlabs.com:2222/devteam/layer7.git  -- use in this repo -- will be removed when this goes public
-    $ git clone https://github.com/CAAPIM/gateway-istio.git -- this will be the public repo -- soon!!
+    $ git clone https://github.com/CAAPIM/gateway-istio.git
     $ cd gateway-istio
     ```
 
