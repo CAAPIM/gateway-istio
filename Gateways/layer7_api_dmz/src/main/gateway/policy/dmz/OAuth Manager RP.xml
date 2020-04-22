@@ -207,5 +207,22 @@
             <L7p:Replacement stringValue="${requestHost}"/>
             <L7p:Target target="RESPONSE"/>
         </L7p:Regex>
+        <L7p:Regex>
+            <L7p:AssertionComment assertionComment="included">
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="// REWRITE RESPONSE BODY"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:AssertionComment>
+            <L7p:AutoTarget booleanValue="false"/>
+            <L7p:CaseInsensitive booleanValue="true"/>
+            <L7p:PatternContainsVariables booleanValue="true"/>
+            <L7p:Regex stringValue="${webRouteHost}"/>
+            <L7p:Replace booleanValue="true"/>
+            <L7p:Replacement stringValue="${requestHost}"/>
+            <L7p:Target target="RESPONSE"/>
+        </L7p:Regex>
     </wsp:All>
 </wsp:Policy>
