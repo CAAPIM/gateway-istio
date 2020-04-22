@@ -297,14 +297,6 @@
             <ul id=topicDetails>
 
             </ul>
-            <!-- <ul id="searchResults" class="collapsible" data-collapsible="accordion">
-                <p style="margin-top:1px;">No results available</p>
-            </ul> -->
-            <!-- <div class="input-field">
-                <h6>Add Comment</h6>
-                <input id="newComment" type=" text" class="browser-default" />
-                <div onclick="addComment();" class="btn">Create</div>
-            </div> -->
         </div>
     </div>
 
@@ -439,6 +431,7 @@
 
             $.ajax(settings).done((response) => {
                 var topicOpts = document.getElementById("topics")
+                topicOpts.innerHTML = '';
                 topics = JSON.parse(response);
                 
                 for (let i = 0; i < topics.length; i++) {
