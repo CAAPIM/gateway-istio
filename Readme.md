@@ -164,7 +164,15 @@ There are a few pre-requisites that we'll need to cover before we get Started
 
   * `Step 4b:` Deploy the Layer7 Helm Chart
     ```
-    $ helm install layer7 --set-file "global.license.value=/<file path>/license.xml" --set "global.license.accept=true" layer7/layer7
+    Note:
+    You can seamlessly switch Gateway versions using 'upgrade' in place of 'install' and the relevant v9.x or v10.x license
+    
+    Gateway v9.4
+    $ helm install layer7 --set-file "global.license.value=/<file path>/license_94.xml" --set "global.license.accept=true,global.version=9.4" layer7/layer7
+    
+    Gateway v10.0
+    $ helm install layer7 --set-file "global.license.value=/<file path>/license_10.xml" --set "global.license.accept=true,global.version=10.0" layer7/layer7
+    
     NAME: layer7
     LAST DEPLOYED: Tue Mar 31 16:40:13 2020
     NAMESPACE: default
