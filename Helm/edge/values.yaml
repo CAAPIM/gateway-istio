@@ -76,10 +76,7 @@ gateway:
   javaArgs: ""
   loadStsCert: true
   customTlsKey:
-    enabled: false
-    secretName: gw-tls
-    cert: tls.crt
-    pem: tls.key
+    enabled: true
   env:
     gatewayPrivateKeys: false
 

@@ -36,8 +36,8 @@ spec:
             - containerPort: {{ .internal }}
             {{- end }}
           volumeMounts:
-{{- if .Values.gateway.env.gatewayPrivateKeys }}
-            - name: gateway-private-keys
+{{- if  .Values.gateway.customTlsKey.enabled }}
+            - name: edge-gateway-certs
               mountPath: /opt/SecureSpan/Gateway/node/default/etc/bootstrap/env/config/privateKeys
 {{- end }}
             - name: {{ template "edge.gateway.fullname" . }}-license-xml
@@ -57,19 +57,6 @@ spec:
             - configMapRef:
                 name: {{ template "edge.gateway.fullname" . }}
           env:
-{{- if  .Values.gateway.customTlsKey.enabled }}
-            - name: SSG_SSL_KEY_PEM
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.gateway.customTlsKey.secretName }}
-                  key: {{ .Values.gateway.customTlsKey.pem }}
-            - name: SSG_SSL_KEY_PEM_CERTS
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.gateway.customTlsKey.secretName }}
-                  key: {{ .Values.gateway.customTlsKey.cert }}
-{{- end }}
-  
 {{- range $name, $value := .Values.gateway.env }}
 {{- if not (empty $value) }}
             - name: {{ $name | quote }}
@@ -99,10 +86,10 @@ spec:
             successThreshold: {{ .Values.readinessProbe.successThreshold }}
 {{- end }}
       volumes:
-{{- if .Values.gateway.env.gatewayPrivateKeys }}
-        - name: edge.gateway-private-keys
+{{- if  .Values.gateway.customTlsKey.enabled }}
+        - name: edge-gateway-certs
           secret:
-            secretName: edge.gateway-private-keys
+            secretName: edge-gateway-certs
 {{- end }}
         - name: {{ template "edge.gateway.fullname" . }}-license-xml
           secret:
