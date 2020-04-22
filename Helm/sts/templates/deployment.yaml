@@ -22,7 +22,11 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.container.image }}:{{ .Values.container.tag }}
+{{- if eq .Values.global.version "9.4" }}
+          image: {{ .Values.container.image }}:1.0
+{{- else if eq .Values.global.version "10.0" }}
+          image: {{ .Values.container.image }}:2.0
+{{- end }}  
           imagePullPolicy: {{ .Values.container.pullPolicy }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}

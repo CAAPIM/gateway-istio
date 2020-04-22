@@ -4,9 +4,9 @@ dependencies:
   version: 1.4.0
 - name: sts
   repository: https://charts.brcmlabs.com
-  version: 1.0.0
+  version: 1.0.1
 - name: demo
   repository: https://charts.brcmlabs.com
   version: 1.0.0
-digest: sha256:3a29c7ebf49db23c6c3831ccb4b02fc1474dee2cc6ca1e6ab09e7154a2ba931f
-generated: "2020-04-03T15:03:51.638745+01:00"
+digest: sha256:426b33c7cd08bb9467ac48002f65ef5a14e9f8caf58afa9e14021e056254a583
+generated: "2020-04-22T22:12:35.171035+01:00"

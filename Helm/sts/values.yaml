@@ -12,13 +12,13 @@ updateStrategy:
 
 # Global License (Gateway 9.x)
 global:
+  version: "9.4"
   license:
     value:
     accept: false
 
 container:
   image: layer7api/sts
-  tag: "1.0"
   pullPolicy: Always
 # The STS Gateway is not external facing by default
 service:
@@ -41,6 +41,7 @@ resources:
 
 # Gateway Configuration
 gateway:
+  version: "9"
 # Cluster Hostname - changing this has an impact in several other places
 # proceed with caution
   clusterHostname: broadcom.localdomain

@@ -12,6 +12,7 @@ updateStrategy:
 
 # Global License (Gateway 9.x)
 global:
+  version: 9.4
   license:
     value:
     accept: false
@@ -32,7 +33,6 @@ sts:
 
 container:
   image: layer7api/edge
-  tag: "1.1"
   pullPolicy: Always
 # The EDGE Gateway is external facing by default
 service:

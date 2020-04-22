@@ -64,13 +64,6 @@ repositories {
     }
 }
 dependencies {
-    //bundle group: 'otk-dual-dmz', name: 'otk-dual-dmz', version: '5.0.0-SNAPSHOT', ext: 'bundle', classifier: 'full'
-    // bundle group: 'dmz-oauth2', name: 'dmz-oauth2', version: '5.0.0-SNAPSHOT', ext: 'bundle'
-    // bundle group: 'shared-oauth', name: 'shared-oauth', version: '5.0.0-SNAPSHOT', ext: 'bundle'
-    // bundle group: 'otk-dual-dmz', name: 'otk-dual-dmz', version: '5.0.0-SNAPSHOT', ext: 'bundle'
-    //customassertion group: 'otk-ResponseTypeSupportedCheckAssertion', name: 'otk-ResponseTypeSupportedCheckAssertion', ext: 'jar', version: '5.0.0-SNAPSHOT'
-    //customassertion group: 'otk-DateFormatStringAssertion', name: 'otk-DateFormatStringAssertion', ext: 'jar', version: '5.0.0-SNAPSHOT'
-    //customassertion group: 'otk-ScopeIssuingAndVerificationAssertions', name: 'otk-ScopeIssuingAndVerificationAssertions', ext: 'jar', version: '5.0.0-SNAPSHOT'
     bundle group: 'influxdb', name: 'influxdb', version: '1.0.0', ext: 'bundle'
     bundle group: 'gateway', name: 'gateway', version: '1.0.0', ext: 'bundle'
 }

@@ -18,3 +18,13 @@ dmz/Istio East West Demo App:
   - "PUT"
   properties: {}
   wssProcessingEnabled: false
+dmz/OAuth Manager RP:
+  url: "/oauth/*"
+  policy: "dmz/OAuth Manager RP"
+  httpMethods:
+  - "DELETE"
+  - "POST"
+  - "GET"
+  - "PUT"
+  properties: {}
+  wssProcessingEnabled: false

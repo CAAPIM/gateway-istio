@@ -9,7 +9,7 @@ dependencies:
   repository: "@stable"
   condition: hazelcast.enabled
 - name: sts
-  version: 1.0.0
+  version: 1.0.1
   repository: "@layer7"
   condition: sts.enabled
 - name: demo

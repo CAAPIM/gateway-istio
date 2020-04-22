@@ -1,0 +1,211 @@
+<wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy" xmlns:L7p="http://www.layer7tech.com/ws/policy">
+    <wsp:All wsp:Usage="Required">
+        <L7p:SslAssertion/>
+        <wsp:All wsp:Usage="Required">
+            <L7p:SetVariable>
+                <L7p:Expression><![CDATA[${request.url.host}:${request.url.port}]]></L7p:Expression>
+                <L7p:VariableToSet stringValue="requestHost"/>
+            </L7p:SetVariable>
+            <L7p:SetVariable>
+                <L7p:Expression><![CDATA[sts-gateway:8443]]></L7p:Expression>
+                <L7p:VariableToSet stringValue="webRouteHost"/>
+            </L7p:SetVariable>
+            <L7p:SetVariable>
+                <L7p:Expression><![CDATA[sts-gateway:443]]></L7p:Expression>
+                <L7p:VariableToSet stringValue="webAppHost"/>
+            </L7p:SetVariable>
+            <L7p:SetVariable>
+                <L7p:Expression><![CDATA[false]]></L7p:Expression>
+                <L7p:VariableToSet stringValue="response.cookie.overwritePath"/>
+            </L7p:SetVariable>
+            <L7p:SetVariable>
+                <L7p:Expression><![CDATA[false]]></L7p:Expression>
+                <L7p:VariableToSet stringValue="response.cookie.overwriteDomain"/>
+            </L7p:SetVariable>
+            <L7p:SetVariable>
+                <L7p:Expression><![CDATA[${request.url.query}]]></L7p:Expression>
+                <L7p:VariableToSet stringValue="query"/>
+            </L7p:SetVariable>
+            <L7p:assertionComment>
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="// CONSTANTS"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:assertionComment>
+        </wsp:All>
+        <L7p:Regex>
+            <L7p:AssertionComment assertionComment="included">
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="// REWRITE REQUEST QUERY"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:AssertionComment>
+            <L7p:AutoTarget booleanValue="false"/>
+            <L7p:CaseInsensitive booleanValue="true"/>
+            <L7p:OtherTargetMessageVariable stringValue="query"/>
+            <L7p:PatternContainsVariables booleanValue="true"/>
+            <L7p:Regex stringValue="${requestHost}"/>
+            <L7p:Replace booleanValue="true"/>
+            <L7p:Replacement stringValue="${webAppHost}"/>
+            <L7p:Target target="OTHER"/>
+        </L7p:Regex>
+        <L7p:Regex>
+            <L7p:AssertionComment assertionComment="included">
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="// REWRITE REQUEST BODY"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:AssertionComment>
+            <L7p:AutoTarget booleanValue="false"/>
+            <L7p:CaseInsensitive booleanValue="true"/>
+            <L7p:PatternContainsVariables booleanValue="true"/>
+            <L7p:Regex stringValue="${requestHost}"/>
+            <L7p:Replace booleanValue="true"/>
+            <L7p:Replacement stringValue="${webAppHost}"/>
+        </L7p:Regex>
+        <L7p:ManageCookie>
+            <L7p:AssertionComment assertionComment="included">
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="// REWRITE REQUEST COOKIE DOMAINS"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:AssertionComment>
+            <L7p:CookieAttributes mapValue="included">
+                <L7p:entry>
+                    <L7p:key stringValue="domain"/>
+                    <L7p:value nameValuePair="included">
+                        <L7p:Key stringValue="domain"/>
+                        <L7p:Value stringValue="${webAppHost}"/>
+                    </L7p:value>
+                </L7p:entry>
+            </L7p:CookieAttributes>
+            <L7p:CookieCriteria mapValue="included">
+                <L7p:entry>
+                    <L7p:key stringValue="domain"/>
+                    <L7p:value cookieCriteria="included">
+                        <L7p:Key stringValue="domain"/>
+                        <L7p:Value stringValue="${request.url.host}"/>
+                    </L7p:value>
+                </L7p:entry>
+            </L7p:CookieCriteria>
+            <L7p:Operation operation="UPDATE"/>
+        </L7p:ManageCookie>
+        <L7p:HttpRoutingAssertion>
+            <L7p:FailOnErrorStatus booleanValue="false"/>
+            <L7p:ProtectedServiceUrl stringValue="https://${webRouteHost}${request.url.path}${query}"/>
+            <L7p:ProxyPassword stringValueNull="null"/>
+            <L7p:ProxyUsername stringValueNull="null"/>
+            <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                <L7p:ForwardAll booleanValue="true"/>
+                <L7p:Rules httpPassthroughRules="included"/>
+            </L7p:RequestHeaderRules>
+            <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                <L7p:ForwardAll booleanValue="true"/>
+                <L7p:Rules httpPassthroughRules="included"/>
+            </L7p:RequestParamRules>
+            <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                <L7p:ForwardAll booleanValue="true"/>
+                <L7p:Rules httpPassthroughRules="included"/>
+            </L7p:ResponseHeaderRules>
+        </L7p:HttpRoutingAssertion>
+        <L7p:ManageCookie>
+            <L7p:AssertionComment assertionComment="included">
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="// REWRITE RESPONSE COOKIE DOMAINS"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:AssertionComment>
+            <L7p:CookieAttributes mapValue="included">
+                <L7p:entry>
+                    <L7p:key stringValue="domain"/>
+                    <L7p:value nameValuePair="included">
+                        <L7p:Key stringValue="domain"/>
+                        <L7p:Value stringValue="${request.url.host}"/>
+                    </L7p:value>
+                </L7p:entry>
+            </L7p:CookieAttributes>
+            <L7p:CookieCriteria mapValue="included">
+                <L7p:entry>
+                    <L7p:key stringValue="domain"/>
+                    <L7p:value cookieCriteria="included">
+                        <L7p:Key stringValue="domain"/>
+                        <L7p:Value stringValue="${webAppHost}"/>
+                    </L7p:value>
+                </L7p:entry>
+            </L7p:CookieCriteria>
+            <L7p:Operation operation="UPDATE"/>
+            <L7p:Target target="RESPONSE"/>
+        </L7p:ManageCookie>
+        <wsp:OneOrMore wsp:Usage="Required">
+            <wsp:All wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:Expression1 stringValue="${response.http.header.location}"/>
+                    <L7p:ExpressionIsVariable booleanValue="false"/>
+                    <L7p:Negate booleanValue="true"/>
+                    <L7p:Operator operator="EMPTY"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item binary="included">
+                            <L7p:Negated booleanValue="true"/>
+                            <L7p:Operator operator="EMPTY"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <L7p:SetVariable>
+                    <L7p:Expression><![CDATA[${response.http.header.location}]]></L7p:Expression>
+                    <L7p:VariableToSet stringValue="l7_tmp_header"/>
+                </L7p:SetVariable>
+                <L7p:Regex>
+                    <L7p:AutoTarget booleanValue="false"/>
+                    <L7p:OtherTargetMessageVariable stringValue="l7_tmp_header"/>
+                    <L7p:PatternContainsVariables booleanValue="true"/>
+                    <L7p:Regex stringValue="${webAppHost}"/>
+                    <L7p:Replace booleanValue="true"/>
+                    <L7p:Replacement stringValue="${requestHost}"/>
+                    <L7p:Target target="OTHER"/>
+                </L7p:Regex>
+                <L7p:AddHeader>
+                    <L7p:HeaderName stringValue="location"/>
+                    <L7p:HeaderValue stringValue="${l7_tmp_header}"/>
+                    <L7p:RemoveExisting booleanValue="true"/>
+                    <L7p:Target target="RESPONSE"/>
+                </L7p:AddHeader>
+            </wsp:All>
+            <L7p:TrueAssertion/>
+            <L7p:assertionComment>
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="// REWRITE LOCATION HEADER"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:assertionComment>
+        </wsp:OneOrMore>
+        <L7p:Regex>
+            <L7p:AssertionComment assertionComment="included">
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="// REWRITE RESPONSE BODY"/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:AssertionComment>
+            <L7p:AutoTarget booleanValue="false"/>
+            <L7p:CaseInsensitive booleanValue="true"/>
+            <L7p:PatternContainsVariables booleanValue="true"/>
+            <L7p:Regex stringValue="${webAppHost}"/>
+            <L7p:Replace booleanValue="true"/>
+            <L7p:Replacement stringValue="${requestHost}"/>
+            <L7p:Target target="RESPONSE"/>
+        </L7p:Regex>
+    </wsp:All>
+</wsp:Policy>
