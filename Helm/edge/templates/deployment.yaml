@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    configmap.reloader.stakater.com/reload: {{ template "edge.gateway.fullname" . }}-configmap
+    configmap.reloader.stakater.com/reload: bundle-configmap
   name: {{ template "edge.gateway.fullname" . }}
   labels:
     app: {{ template "edge.gateway.name" . }}
@@ -49,6 +49,10 @@ spec:
             - name: {{ template "edge.gateway.fullname" . }}-log-config-override
               mountPath: /opt/SecureSpan/Gateway/node/default/etc/conf/log-override.properties
               subPath: log-override.properties
+{{- if .Values.gateway.bundle.enabled }}
+            - name: bundle-configmap
+              mountPath: opt/SecureSpan/Gateway/node/default/etc/bootstrap/bundle/configmap
+{{- end}}
           envFrom:
             - configMapRef:
                 name: {{ template "edge.gateway.fullname" . }}
@@ -118,3 +122,10 @@ spec:
             items:
             - key: log-override-properties
               path: log-override.properties
+{{- if .Values.gateway.bundle.enabled }}
+        - name: bundle-configmap
+          configMap:
+            defaultMode: 292
+            optional: false
+            name: bundle-configmap
+{{- end }}

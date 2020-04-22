@@ -1,0 +1,206 @@
+<l7:Bundle xmlns:l7="http://ns.l7tech.com/2010/04/gateway-management">
+    <l7:References>
+        <l7:Item>
+            <l7:Name>log.levels</l7:Name>
+            <l7:Id>efa6324d69c65f8cbcbf28a203829fb0</l7:Id>
+            <l7:Type>CLUSTER_PROPERTY</l7:Type>
+            <l7:Resource>
+                <l7:ClusterProperty id="efa6324d69c65f8cbcbf28a203829fb0">
+                    <l7:Name>log.levels</l7:Name>
+                    <l7:Value>com.l7tech.level = CONFIG
+ com.l7tech.server.policy.variable.ServerVariables.level = SEVERE
+ com.l7tech.external.assertions.odata.server.producer.jdbc.GenerateSqlQuery.level = SEVERE
+ com.l7tech.server.policy.assertion.ServerSetVariableAssertion.level = SEVERE
+ com.l7tech.external.assertions.comparison.server.ServerComparisonAssertion = SEVERE</l7:Value>
+                </l7:ClusterProperty>
+            </l7:Resource>
+        </l7:Item>
+        <l7:Item>
+            <l7:Name>myclusterprop</l7:Name>
+            <l7:Id>efa6324d69c65f8cbcbf28a203829fb1</l7:Id>
+            <l7:Type>CLUSTER_PROPERTY</l7:Type>
+            <l7:Resource>
+                <l7:ClusterProperty id="efa6324d69c65f8cbcbf28a203829fb1">
+                    <l7:Name>myclusterprop</l7:Name>
+                    <l7:Value>jane prop</l7:Value>
+                </l7:ClusterProperty>
+            </l7:Resource>
+        </l7:Item>
+        <l7:Item>
+            <l7:Name>log_levels</l7:Name>
+            <l7:Id>efa6324d69c65f8cbcbf28a203829fb2</l7:Id>
+            <l7:Type>CLUSTER_PROPERTY</l7:Type>
+            <l7:Resource>
+                <l7:ClusterProperty id="efa6324d69c65f8cbcbf28a203829fb2">
+                    <l7:Name>log_levels</l7:Name>
+                    <l7:Value>com.l7tech.server.policy.level = FINEST
+com.hazelcast.level = OFF</l7:Value>
+                </l7:ClusterProperty>
+            </l7:Resource>
+        </l7:Item>
+        <l7:Item>
+            <l7:Name>audit.setDetailLevel.FINE</l7:Name>
+            <l7:Id>efa6324d69c65f8cbcbf28a203829fb3</l7:Id>
+            <l7:Type>CLUSTER_PROPERTY</l7:Type>
+            <l7:Resource>
+                <l7:ClusterProperty id="efa6324d69c65f8cbcbf28a203829fb3">
+                    <l7:Name>audit.setDetailLevel.FINE</l7:Name>
+                    <l7:Value>152 7101 7103 9648 9645 7026 7027 4155 150 4716 4114 6306 4100 9655 150 151 11000 4104</l7:Value>
+                </l7:ClusterProperty>
+            </l7:Resource>
+        </l7:Item>
+        <l7:Item>
+            <l7:Name>Default HTTP (8080)</l7:Name>
+            <l7:Id>efa6324d69c65f8cbcbf28a203829fb4</l7:Id>
+            <l7:Type>SSG_CONNECTOR</l7:Type>
+            <l7:Resource>
+                <l7:ListenPort id="efa6324d69c65f8cbcbf28a203829fb4">
+                    <l7:Name>Default HTTP (8080)</l7:Name>
+                    <l7:Enabled>true</l7:Enabled>
+                    <l7:Protocol>HTTP</l7:Protocol>
+                    <l7:Port>8080</l7:Port>
+                    <l7:EnabledFeatures>
+                        <l7:StringValue>Policy download service</l7:StringValue>
+                        <l7:StringValue>SNMP Query service</l7:StringValue>
+                        <l7:StringValue>Ping service</l7:StringValue>
+                        <l7:StringValue>WS-Trust security token service</l7:StringValue>
+                        <l7:StringValue>WSDL download service</l7:StringValue>
+                        <l7:StringValue>Published service message input</l7:StringValue>
+                    </l7:EnabledFeatures>
+                </l7:ListenPort>
+            </l7:Resource>
+        </l7:Item>
+        <l7:Item>
+            <l7:Name>Default HTTPS (8443)</l7:Name>
+            <l7:Id>efa6324d69c65f8cbcbf28a203829fb5</l7:Id>
+            <l7:Type>SSG_CONNECTOR</l7:Type>
+            <l7:Resource>
+                <l7:ListenPort id="efa6324d69c65f8cbcbf28a203829fb5">
+                    <l7:Name>Default HTTPS (8443)</l7:Name>
+                    <l7:Enabled>true</l7:Enabled>
+                    <l7:Protocol>HTTPS</l7:Protocol>
+                    <l7:Port>8443</l7:Port>
+                    <l7:EnabledFeatures>
+                        <l7:StringValue>Browser-based administration</l7:StringValue>
+                        <l7:StringValue>Built-in services</l7:StringValue>
+                        <l7:StringValue>Administrative access</l7:StringValue>
+                        <l7:StringValue>Published service message input</l7:StringValue>
+                    </l7:EnabledFeatures>
+                    <l7:TlsSettings>
+                        <l7:ClientAuthentication>Optional</l7:ClientAuthentication>
+                        <l7:EnabledVersions>
+                            <l7:StringValue>TLSv1</l7:StringValue>
+                            <l7:StringValue>TLSv1.2</l7:StringValue>
+                            <l7:StringValue>TLSv1.1</l7:StringValue>
+                        </l7:EnabledVersions>
+                        <l7:EnabledCipherSuites>
+                            <l7:StringValue>TLS_RSA_WITH_AES_128_CBC_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_RSA_WITH_AES_128_GCM_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_DHE_RSA_WITH_AES_128_CBC_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_RSA_WITH_AES_256_GCM_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_RSA_WITH_AES_256_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_DHE_RSA_WITH_AES_256_GCM_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_DHE_RSA_WITH_AES_128_GCM_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_RSA_WITH_AES_256_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_RSA_WITH_AES_128_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_RSA_WITH_AES_256_CBC_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_DHE_RSA_WITH_AES_256_CBC_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_DHE_RSA_WITH_AES_256_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_RSA_WITH_AES_128_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_DHE_RSA_WITH_AES_128_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256</l7:StringValue>
+                            <l7:StringValue>TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384</l7:StringValue>
+                            <l7:StringValue>TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384</l7:StringValue>
+                        </l7:EnabledCipherSuites>
+                        <l7:Properties>
+                            <l7:Property key="usesTLS">
+                                <l7:BooleanValue>true</l7:BooleanValue>
+                            </l7:Property>
+                        </l7:Properties>
+                    </l7:TlsSettings>
+                </l7:ListenPort>
+            </l7:Resource>
+        </l7:Item>
+    </l7:References>
+    <l7:Mappings>
+        <l7:Mapping action="NewOrUpdate" srcId="efa6324d69c65f8cbcbf28a203829fb0" type="CLUSTER_PROPERTY">
+            <l7:Properties>
+                <l7:Property key="MapBy">
+                    <l7:StringValue>name</l7:StringValue>
+                </l7:Property>
+                <l7:Property key="MapTo">
+                    <l7:StringValue>log.levels</l7:StringValue>
+                </l7:Property>
+            </l7:Properties>
+        </l7:Mapping>
+        <l7:Mapping action="NewOrUpdate" srcId="efa6324d69c65f8cbcbf28a203829fb1" type="CLUSTER_PROPERTY">
+            <l7:Properties>
+                <l7:Property key="MapBy">
+                    <l7:StringValue>name</l7:StringValue>
+                </l7:Property>
+                <l7:Property key="MapTo">
+                    <l7:StringValue>myclusterprop</l7:StringValue>
+                </l7:Property>
+            </l7:Properties>
+        </l7:Mapping>
+        <l7:Mapping action="NewOrUpdate" srcId="efa6324d69c65f8cbcbf28a203829fb2" type="CLUSTER_PROPERTY">
+            <l7:Properties>
+                <l7:Property key="MapBy">
+                    <l7:StringValue>name</l7:StringValue>
+                </l7:Property>
+                <l7:Property key="MapTo">
+                    <l7:StringValue>log_levels</l7:StringValue>
+                </l7:Property>
+            </l7:Properties>
+        </l7:Mapping>
+        <l7:Mapping action="NewOrUpdate" srcId="efa6324d69c65f8cbcbf28a203829fb3" type="CLUSTER_PROPERTY">
+            <l7:Properties>
+                <l7:Property key="MapBy">
+                    <l7:StringValue>name</l7:StringValue>
+                </l7:Property>
+                <l7:Property key="MapTo">
+                    <l7:StringValue>audit.setDetailLevel.FINE</l7:StringValue>
+                </l7:Property>
+            </l7:Properties>
+        </l7:Mapping>
+        <l7:Mapping action="NewOrExisting" srcId="efa6324d69c65f8cbcbf28a203829fb4" type="SSG_CONNECTOR">
+            <l7:Properties>
+                <l7:Property key="MapBy">
+                    <l7:StringValue>name</l7:StringValue>
+                </l7:Property>
+                <l7:Property key="MapTo">
+                    <l7:StringValue>Default HTTP (8080)</l7:StringValue>
+                </l7:Property>
+            </l7:Properties>
+        </l7:Mapping>
+        <l7:Mapping action="NewOrExisting" srcId="efa6324d69c65f8cbcbf28a203829fb5" type="SSG_CONNECTOR">
+            <l7:Properties>
+                <l7:Property key="MapBy">
+                    <l7:StringValue>name</l7:StringValue>
+                </l7:Property>
+                <l7:Property key="MapTo">
+                    <l7:StringValue>Default HTTPS (8443)</l7:StringValue>
+                </l7:Property>
+            </l7:Properties>
+        </l7:Mapping>
+    </l7:Mappings>
+</l7:Bundle>

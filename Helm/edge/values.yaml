@@ -69,6 +69,8 @@ gateway:
     enabled: true
     username: admin
     password: 7layer
+  bundle:
+    enabled: true
 
   heapSize: "2g"
   javaArgs: ""
