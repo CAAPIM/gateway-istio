@@ -23,15 +23,17 @@ Table of Contents
       * [Install Reloader](#install-reloader)
       * [Check status](#check-status)
    * [Project Setup](#project-setup)
-   * [Install Istio components (Optional)](#install-istio-components-optional)
+   * [Install Demo components](#install-demo-components)
    * [Validate your installation](#validate-your-installation)
    * [Configure hosts](#configure-hosts)
+   * [Test that the auth adapter is working correctly](#test-that-the-auth-adapter-is-working-correctly)
    * [Evaluating the toolchain](#evaluating-the-toolchain)
-      * [Built in sample project](#built-in-sample-project)
+      * [Built in sample projects](#built-in-sample-projects)
+      * [Dashboard](#dashboard)
    * [Possible error Conditions](#possible-error-conditions)
       * [No APIM License](#no-apim-license)
 
-<!-- Added by: jaythorne, at: Tue 31 Mar 2020 17:41:23 PDT -->
+<!-- Added by: jaythorne, at: Fri 24 Apr 2020 11:52:13 PDT -->
 
 <!--te-->
 
@@ -275,7 +277,7 @@ There are a few pre-requisites that we'll need to cover before we get Started
     ````
 
 # Test that the auth adapter is working correctly
-    ```
+    
       $ kubectl get pods -n istio-system | grep layer7
       
       layer7authadapter-xxx-xxx         1/1     Running   0          74m
@@ -327,19 +329,40 @@ There are a few pre-requisites that we'll need to cover before we get Started
       2020-04-03T16:10:31.923160Z     info    ---------CHECK TOKEN-----------
       2020-04-03T16:10:31.923182Z     info    Headers: map[Authorization:[Bearer 52015ff4-2cb6-41f0-aa21-a564e672b274]]
       2020-04-03T16:10:32.043206Z     info    ------->Check Token<--------
-    ````
+    
 
 # Evaluating the toolchain
 
 You should start by getting a look at publishing an API, and then using it. We provide tools here that automate a "my first published API" project.
 
-## Built in sample project
+## Built in sample projects
 
-* Deploying the sample (Already deployed...)
+* The "Server_A" and "Server_B" are our provided East/West sample project. They provide an extremely crude topic system, that composes a server (Server A) with a back end API (Server B). These are connected via a ruleset that uses a mixer based authorization, backed by the API Gateway in OTK Secure Token Service mode (sts)
+** Access that via the https://broadcom.localdomain/ URL assuming you have used the suggested domains as noted above. 
+
+* There's a built in ingress test chain, based on an oversimplified policy. That's accessed via https://broadcom.localdomain/perftest and is controlled via http headers. Output is small and is meant only to demonstrate latency of the ingress path.  
+* Performance testing via apache benchmark: 
+
+   ```ab -c 1 -n 10 -H "foo: Foo" -H "route: no" https://broadcom.localdomain/perftest```
+   
+   Provides a simple header based flow: "foo: Foo" is required or the policy will emit an error, this specifically to show errors in statistics to indicate policy based errors. 
+
+  ```ab -c 1 -n 10 -H "foo: Foo" -H "route: Yes" https://broadcom.localdomain/perftest```
+
+  Changing the route header to Yes will show back end latency - it routes to the STS login page to provide both latency and response message size. 
+
+  Testing via tools like gatling, jmeter or other performance tests are certainly possible. Note the headers and URL as above. By default this uses a self signed certificate. 
+
+## Dashboard
+* Grafana with Influx backing is included with a pre-built dashboard accessible via https://grafana.localdomain/. This is a default grafana security setup, so username / password is the default. See https://docs.gitlab.com/ee/administration/monitoring/performance/grafana_configuration.html for more details.  
+
+
+
 
 # Possible error Conditions
 ## No APIM License
 
+This is marked by a restart as the availability check won't find a useful connection. ```FIXME: @@Gary: does the avaliablity try to consume an api or just check for open port?``` 
 ```
 $kubectl get pods
 NAME                               READY   STATUS    RESTARTS   AGE
