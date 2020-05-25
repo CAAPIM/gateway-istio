@@ -6,6 +6,8 @@ This project supplies a Kubernetes based mesh networking system to use the Broad
   
 This is provided as source configuration, and is supplied as-is, with no implied warranty as to fitness to purpose. Please feel free to use this as source material for your own project. If we get something wrong, report an issue and we'll try to get it fixed, or send us a pull request with your fix. 
 
+The Mixer code especially is not performance tested, and serves as a sample. When Istio's authorization framework is complete, this portion of the repository will be obsolete. At that point, we will augment this to include configuration for the auth framework. 
+
 The focus of the project is to bring the world of API Management and the world of Mesh networking together. Our view is that this is a natural progression of the world of API Managment, and an obvious enhancement to Mesh & Istio.
 
 Table of Contents
