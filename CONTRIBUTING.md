@@ -7,7 +7,9 @@ We welcome and encourage pull requests. When we get a pull request, it is peer r
 Follow these steps for pull requests:
 
 1. Fork the repo and create your branch from `master`.
-
+2. For any new golang code, add unit tests.
+3. For configuration changes, if possible, add your efforts without changing existing defaults, but supply new optional behaviour
+4. If you've changed semantics of the mixer, supply changed enforcement policy that conforms to the new semantics
 
 ## Bugs
 We work hard to avoid them, but they still happen. Use GitHub issues to report bug and other issues.
