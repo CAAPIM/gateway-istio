@@ -362,7 +362,8 @@ You should start by getting a look at publishing an API, and then using it. We p
 # Possible error Conditions
 ## No APIM License
 
-This is marked by a restart as the availability check won't find a useful connection. ```FIXME: @@Gary: does the avaliablity try to consume an api or just check for open port?``` 
+This is marked by a restart as the availability check won't find a useful connection.
+
 ```
 $kubectl get pods
 NAME                               READY   STATUS    RESTARTS   AGE
