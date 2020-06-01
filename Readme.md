@@ -3,6 +3,8 @@ Broadcom Layer7 Istio Mesh Networking
 Public Alpha May 2020
 ----------------------
 This project supplies a Kubernetes based mesh networking system to use the Broadcom Layer7 API Management Suite with mesh as an integrated and easy to use part of enterprise deployment of APIs.
+
+Here's a [Discussion and demo of the project](https://apiacademy.co/2020/01/tech-talk-building-api-aware-service-meshes-with-layer7-istio/)
   
 This is provided as source configuration, and is supplied as-is, with no implied warranty as to fitness to purpose. Please feel free to use this as source material for your own project. If we get something wrong, report an issue and we'll try to get it fixed, or send us a pull request with your fix. 
 
