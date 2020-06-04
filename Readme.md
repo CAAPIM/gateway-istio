@@ -70,15 +70,22 @@ There are a few pre-requisites that we'll need to cover before we get Started
 
   *   Local install using Kubernetes [Have a look at this](K8S-Readme.md)
 
-## We'll also need Helm
+## We'll also need Helm Version 3
 * `PreReq Step 2:` Helm v3
+
   - Helm Installation [Documentation](https://helm.sh/docs/intro/install/)
-  
+
+  - Verify your Helm version. V3 is absolutely required
+  ```
+  $ helm version
+  version.BuildInfo{Version:"v3.1.2", GitCommit:"d878d4d45863e42fd5cff6743294a11d28a9abce", GitTreeState:"clean", GoVersion:"go1.13.8"}
+
    ```
    MacOS Example using HomeBrew (against a GKE Cluster)
    $ brew install helm
    $ kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user <youremailaddress.com>
-   
+
+
    ```
   
 * `PreReq Step 3:` Add Helm Repositories
