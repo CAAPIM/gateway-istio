@@ -16,19 +16,14 @@
             <L7p:Comment stringValue="* Input: A JSON format message containing service metrics for single request (as ${metrics})"/>
         </L7p:CommentAssertion>
         <L7p:CommentAssertion>
+            <L7p:Comment stringValue="* Output: API post of text format message containing data formatted into tags and values for Influx, space separated"/>
+        </L7p:CommentAssertion>
+        <L7p:CommentAssertion>
             <L7p:Comment stringValue="* "/>
         </L7p:CommentAssertion>
         <L7p:CommentAssertion>
             <L7p:Comment stringValue="********************************************************************************************************************"/>
         </L7p:CommentAssertion>
-        <L7p:AuditAssertion>
-            <L7p:Enabled booleanValue="false"/>
-        </L7p:AuditAssertion>
-        <L7p:AuditDetailAssertion>
-            <L7p:Detail stringValue="metrics: ${metrics.mainpart}"/>
-            <L7p:Enabled booleanValue="false"/>
-            <L7p:Level stringValue="WARNING"/>
-        </L7p:AuditDetailAssertion>
         <wsp:All wsp:Usage="Required">
             <L7p:EvaluateJsonPathExpression>
                 <L7p:Expression stringValue="time"/>
@@ -48,6 +43,16 @@
                 <L7p:Target target="OTHER"/>
                 <L7p:VariablePrefix stringValue="nodeName"/>
             </L7p:EvaluateJsonPathExpression>
+            <L7p:Regex>
+                <L7p:AutoTarget booleanValue="false"/>
+                <L7p:CaseInsensitive booleanValue="true"/>
+                <L7p:OtherTargetMessageVariable stringValue="nodeName.result"/>
+                <L7p:Regex stringValue="(\\| )"/>
+                <L7p:RegexName stringValue="Escape slash and spaces"/>
+                <L7p:Replace booleanValue="true"/>
+                <L7p:Replacement stringValue="\\$1"/>
+                <L7p:Target target="OTHER"/>
+            </L7p:Regex>
             <L7p:EvaluateJsonPathExpression>
                 <L7p:Expression stringValue="nodeIp"/>
                 <L7p:OtherTargetMessageVariable stringValue="metrics"/>
@@ -66,6 +71,16 @@
                 <L7p:Target target="OTHER"/>
                 <L7p:VariablePrefix stringValue="serviceName"/>
             </L7p:EvaluateJsonPathExpression>
+            <L7p:Regex>
+                <L7p:AutoTarget booleanValue="false"/>
+                <L7p:CaseInsensitive booleanValue="true"/>
+                <L7p:OtherTargetMessageVariable stringValue="serviceName.result"/>
+                <L7p:Regex stringValue="(\\| )"/>
+                <L7p:RegexName stringValue="Escape slash and spaces"/>
+                <L7p:Replace booleanValue="true"/>
+                <L7p:Replacement stringValue="\\$1"/>
+                <L7p:Target target="OTHER"/>
+            </L7p:Regex>
             <L7p:EvaluateJsonPathExpression>
                 <L7p:Expression stringValue="serviceUri"/>
                 <L7p:OtherTargetMessageVariable stringValue="metrics"/>
@@ -110,56 +125,134 @@
             <L7p:VariableToSet stringValue="ENV.influxdb"/>
         </L7p:SetVariable>
         <L7p:SetVariable>
-            <L7p:Expression><![CDATA[id=${requestId},nodeId=${nodeId.result},nodeName=${nodeName.result},nodeIp=${nodeIp.result},serviceId=${serviceId.result},serviceName=${serviceName.result},serviceUri=${serviceUri.result},isPolicySuccessful=${isPolicySuccessful.result},isPolicyViolation=${isPolicyViolation.result},isRoutingFailure=${isRoutingFailure.result}]]></L7p:Expression>
+            <L7p:Expression><![CDATA[nodeId=${nodeId.result},nodeName=${nodeName.result},nodeIp=${nodeIp.result},serviceId=${serviceId.result},serviceName=${serviceName.result},serviceUri=${serviceUri.result},isPolicySuccessful=${isPolicySuccessful.result},isPolicyViolation=${isPolicyViolation.result},isRoutingFailure=${isRoutingFailure.result}]]></L7p:Expression>
             <L7p:VariableToSet stringValue="tags"/>
         </L7p:SetVariable>
         <L7p:SetVariable>
             <L7p:Expression><![CDATA[totalFrontendLatency=${totalFrontendLatency.result},totalBackendLatency=${totalBackendLatency.result}]]></L7p:Expression>
             <L7p:LineBreak lineBreak="LF"/>
-            <L7p:VariableToSet stringValue="mesaurement"/>
+            <L7p:VariableToSet stringValue="measurement"/>
         </L7p:SetVariable>
         <L7p:SetVariable>
-            <L7p:Expression><![CDATA[request,${tags},${ENV.tags} ${mesaurement} ${time.result}000000]]></L7p:Expression>
-            <L7p:ContentType stringValue="text/plain; charset=utf-8"/>
-            <L7p:DataType variableDataType="message"/>
+            <L7p:AssertionComment assertionComment="included">
+                <L7p:Properties mapValue="included">
+                    <L7p:entry>
+                        <L7p:key stringValue="RIGHT.COMMENT"/>
+                        <L7p:value stringValue="Add a unique value to timestamp so high performance APIs are counted accurately. "/>
+                    </L7p:entry>
+                </L7p:Properties>
+            </L7p:AssertionComment>
+            <L7p:Expression><![CDATA[000000${gateway.random.2.unsigned}]]></L7p:Expression>
+            <L7p:LineBreak lineBreak="LF"/>
+            <L7p:VariableToSet stringValue="unique"/>
+        </L7p:SetVariable>
+        <L7p:Regex>
+            <L7p:AutoTarget booleanValue="false"/>
+            <L7p:OtherTargetMessageVariable stringValue="unique"/>
+            <L7p:Regex stringValue="^.*([0-9]{6})$"/>
+            <L7p:RegexName stringValue="Last chars"/>
+            <L7p:Replace booleanValue="true"/>
+            <L7p:Replacement stringValue="$1"/>
+            <L7p:Target target="OTHER"/>
+        </L7p:Regex>
+        <L7p:SetVariable>
+            <L7p:Expression><![CDATA[request,${tags},${ENV.tags} ${measurement} ${time.result}${unique}
+]]></L7p:Expression>
             <L7p:LineBreak lineBreak="LF"/>
             <L7p:VariableToSet stringValue="requestDataPointMsg"/>
         </L7p:SetVariable>
-        <L7p:AuditDetailAssertion>
-            <L7p:Detail stringValue="requestDataPointMsg: ${requestDataPointMsg.mainpart}"/>
-            <L7p:Enabled booleanValue="false"/>
-            <L7p:Level stringValue="WARNING"/>
-        </L7p:AuditDetailAssertion>
-        <L7p:HttpRoutingAssertion>
-            <L7p:HttpMethod httpMethod="POST"/>
-            <L7p:ProtectedServiceUrl stringValue="http://${ENV.influxdb}:8086/write?db=serviceMetricsDb"/>
-            <L7p:ProxyPassword stringValueNull="null"/>
-            <L7p:ProxyUsername stringValueNull="null"/>
-            <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
-                <L7p:ForwardAll booleanValue="true"/>
-                <L7p:Rules httpPassthroughRules="included">
-                    <L7p:item httpPassthroughRule="included">
-                        <L7p:Name stringValue="Cookie"/>
-                    </L7p:item>
-                    <L7p:item httpPassthroughRule="included">
-                        <L7p:Name stringValue="SOAPAction"/>
-                    </L7p:item>
-                </L7p:Rules>
-            </L7p:RequestHeaderRules>
-            <L7p:RequestMsgSrc stringValue="requestDataPointMsg"/>
-            <L7p:RequestParamRules httpPassthroughRuleSet="included">
-                <L7p:ForwardAll booleanValue="true"/>
-                <L7p:Rules httpPassthroughRules="included"/>
-            </L7p:RequestParamRules>
-            <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
-                <L7p:ForwardAll booleanValue="true"/>
-                <L7p:Rules httpPassthroughRules="included">
-                    <L7p:item httpPassthroughRule="included">
-                        <L7p:Name stringValue="Set-Cookie"/>
-                    </L7p:item>
-                </L7p:Rules>
-            </L7p:ResponseHeaderRules>
-            <L7p:SamlAssertionVersion intValue="2"/>
-        </L7p:HttpRoutingAssertion>
+        <L7p:BufferData>
+            <L7p:BufferName stringValue="buffer"/>
+            <L7p:MaxAgeMillis longValue="5000"/>
+            <L7p:MaxSizeBytes longValue="131072"/>
+            <L7p:NewDataVarName stringValue="requestDataPointMsg"/>
+        </L7p:BufferData>
+        <wsp:OneOrMore wsp:Usage="Required">
+            <wsp:OneOrMore wsp:Usage="Required">
+                <L7p:ComparisonAssertion>
+                    <L7p:AssertionComment assertionComment="included">
+                        <L7p:Properties mapValue="included">
+                            <L7p:entry>
+                                <L7p:key stringValue="LEFT.COMMENT"/>
+                                <L7p:value stringValue="Common case is buffer was not extracted"/>
+                            </L7p:entry>
+                            <L7p:entry>
+                                <L7p:key stringValue="RIGHT.COMMENT"/>
+                                <L7p:value stringValue="This performs better and logs less. "/>
+                            </L7p:entry>
+                        </L7p:Properties>
+                    </L7p:AssertionComment>
+                    <L7p:CaseSensitive booleanValue="false"/>
+                    <L7p:Expression1 stringValue="${buffer.wasExtracted}"/>
+                    <L7p:ExpressionIsVariable booleanValue="false"/>
+                    <L7p:Operator operatorNull="null"/>
+                    <L7p:Predicates predicates="included">
+                        <L7p:item dataType="included">
+                            <L7p:Type variableDataType="boolean"/>
+                        </L7p:item>
+                        <L7p:item binary="included">
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:RightValue stringValue="false"/>
+                        </L7p:item>
+                    </L7p:Predicates>
+                </L7p:ComparisonAssertion>
+                <wsp:All wsp:Usage="Required">
+                    <L7p:HttpRoutingAssertion>
+                        <L7p:FailOnErrorStatus booleanValue="false"/>
+                        <L7p:HttpMethod httpMethod="POST"/>
+                        <L7p:ProtectedServiceUrl stringValue="http://${ENV.influxdb}:8086/write?db=serviceMetricsDb"/>
+                        <L7p:ProxyPassword stringValueNull="null"/>
+                        <L7p:ProxyUsername stringValueNull="null"/>
+                        <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included">
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="Cookie"/>
+                                </L7p:item>
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="SOAPAction"/>
+                                </L7p:item>
+                            </L7p:Rules>
+                        </L7p:RequestHeaderRules>
+                        <L7p:RequestMsgSrc stringValue="buffer.extractedMessage"/>
+                        <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included"/>
+                        </L7p:RequestParamRules>
+                        <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included">
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="Set-Cookie"/>
+                                </L7p:item>
+                            </L7p:Rules>
+                        </L7p:ResponseHeaderRules>
+                        <L7p:SamlAssertionVersion intValue="2"/>
+                    </L7p:HttpRoutingAssertion>
+                    <wsp:OneOrMore wsp:Usage="Required">
+                        <L7p:ComparisonAssertion>
+                            <L7p:CaseSensitive booleanValue="false"/>
+                            <L7p:Expression1 stringValue="${httpRouting.reasonCode}"/>
+                            <L7p:ExpressionIsVariable booleanValue="false"/>
+                            <L7p:Operator operatorNull="null"/>
+                            <L7p:Predicates predicates="included">
+                                <L7p:item dataType="included">
+                                    <L7p:Type variableDataType="int"/>
+                                </L7p:item>
+                                <L7p:item binary="included">
+                                    <L7p:CaseSensitive booleanValue="false"/>
+                                    <L7p:RightValue stringValue="204"/>
+                                </L7p:item>
+                            </L7p:Predicates>
+                        </L7p:ComparisonAssertion>
+                        <L7p:AuditDetailAssertion>
+                            <L7p:Detail stringValue="Error Sending Stats Code:[${httpRouting.reasoncode}]: Message: [${response.mainpart}]"/>
+                            <L7p:LoggingOnly booleanValue="true"/>
+                        </L7p:AuditDetailAssertion>
+                    </wsp:OneOrMore>
+                </wsp:All>
+            </wsp:OneOrMore>
+            <L7p:TrueAssertion/>
+        </wsp:OneOrMore>
     </wsp:All>
 </wsp:Policy>
