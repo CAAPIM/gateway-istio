@@ -1,3 +1,5 @@
+Repo has been moved. Please go to https://github.com/Layer7-Community/Integrations/tree/main/gateway-istio
+
 Broadcom Layer7 Istio Mesh Networking
 ====================================
 Public Alpha May 2020
